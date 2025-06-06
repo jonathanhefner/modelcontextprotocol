@@ -7,64 +7,66 @@
 }
 
 
-/*** Add automatic section numbers to table of contents ***/
+/*** Add automatic section numbers to headings and table of contents items ***/
 
-#table-of-contents-content {
-  ul {
-    counter-reset: li-counter;
-
-    li {
-      counter-increment: li-counter;
-    }
-
-    li::before {
-      content: counters(li-counter, ".") " ";
-    }
-  }
+#disable-section-numbers {
+  display: none;
 }
 
-/*** Add automatic section numbers to headings ***/
+body:not(:has(#disable-section-numbers)) {
+  #content-area,
+  #table-of-contents {
+    counter-reset: h2-counter h3-counter h4-counter h5-counter h6-counter;
+  }
 
-#content-area {
-  counter-reset: h2-counter h3-counter h4-counter h5-counter h6-counter;
 
-  h2[id] {
+  #content-area h2[id],
+  #table-of-contents li[data-depth="0"] {
     counter-set: h3-counter h4-counter h5-counter h6-counter;
   }
 
-  h3[id] {
+  #content-area h3[id],
+  #table-of-contents li[data-depth="1"] {
     counter-set: h4-counter h5-counter h6-counter;
   }
 
-  h4[id] {
+  #content-area h4[id],
+  #table-of-contents li[data-depth="2"] {
     counter-set: h5-counter h6-counter;
   }
 
-  h5[id] {
+  #content-area h5[id],
+  #table-of-contents li[data-depth="3"] {
     counter-set: h6-counter;
   }
 
-  h2[id]::before {
+
+  #content-area h2[id]::before,
+  #table-of-contents li[data-depth="0"] a::before {
     counter-increment: h2-counter;
     content: counter(h2-counter) ". ";
   }
 
-  h3[id]::before {
+  #content-area h3[id]::before,
+  #table-of-contents li[data-depth="1"] a::before {
     counter-increment: h3-counter;
     content: counter(h2-counter) "." counter(h3-counter) " ";
   }
 
-  h4[id]::before {
+  #content-area h4[id]::before,
+  #table-of-contents li[data-depth="2"] a::before {
     counter-increment: h4-counter;
     content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter) " ";
   }
 
-  h5[id]::before {
+  #content-area h5[id]::before,
+  #table-of-contents li[data-depth="3"] a::before {
     counter-increment: h5-counter;
     content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)  "." counter(h5-counter) " ";
   }
 
-  h6[id]::before {
+  #content-area h6[id]::before,
+  #table-of-contents li[data-depth="4"] a::before {
     counter-increment: h6-counter;
     content: counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter)  "." counter(h5-counter) "." counter(h6-counter) " ";
   }
