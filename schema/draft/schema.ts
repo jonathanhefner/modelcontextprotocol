@@ -33,11 +33,6 @@ export interface Request {
        * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
        */
       progressToken?: ProgressToken;
-      /**
-       * If specified, the caller is making this request on a stream previously
-       * initiated via or `stream/start` or `stream/resume`.
-       */
-      streamId?: string;
       [key: string]: unknown;
     };
     [key: string]: unknown;
@@ -222,9 +217,9 @@ export interface ClientCapabilities {
    */
   elicitation?: object;
   /**
-   * Present if the client supports resumable streams.
+   * Present if the client supports resumable requests.
    */
-  streams?: object;
+  resumableRequests?: object;
 }
 
 /**
@@ -1393,147 +1388,124 @@ export interface ElicitResult extends Result {
 }
 
 /**
- * A notification to the client that a stream was created. Messages may be sent
- * on the stream immediately after the creation notification.
+ * A notification to the client that a request is resumable, subject to the
+ * specified policy.
  */
-export interface StreamCreateNotification extends Notification {
-  method: "notifications/stream/create";
+export interface ResumePolicyNotification extends Notification {
+  method: "notifications/requests/resumePolicy";
   params: {
     /**
-     * A unique identifier for the stream. If the stream is resumable, this ID
-     * should be globally unique across instances of the server.
-     */
-    streamId: string;
-
-    /**
-     * The ID of the originating request.
+     * The ID of the request.
      */
     requestId: RequestId;
 
-    resumeInterval?: {
-      /**
-       * The minimum number of seconds a client should wait before resuming
-       * or polling the stream.
-       */
-      min?: number;
+    /**
+     * An opaque token that the client must send back to the server when
+     * resuming the request or checking its status.
+     *
+     * This token should be treated as sensitive information because it can be
+     * used to access messages related to the request.
+     */
+    resumeToken: string;
 
-      /**
-       * The maximum number of seconds a client may wait before resuming or
-       * polling the stream. A value of 0 indicates that the stream is not
-       * resumable, and that the task may be cancelled upon disconnect.
-       *
-       * If this number is omitted, the server provides no guarantee, and may
-       * terminate the stream at its own discretion.
-       */
-      max?: number;
-    }
+    /**
+     * The minimum number of seconds a client should wait after a disconnection
+     * before resuming the request or checking its status.
+     */
+    minWait?: number;
+
+    /**
+     * The maximum number of seconds a client may wait after a disconnection
+     * before resuming the request or checking its status. After this time has
+     * elapsed, the server may cancel the request and free all associated
+     * resources.
+     *
+     * If this number is omitted, the server provides no guarantee, and may
+     * cancel the request at its own discretion.
+     */
+    maxWait?: number;
   }
 }
 
 /**
- * A request from the client to the server to begin receiving messages
- * from a stream. The server SHOULD send all unsent messages to the client
- * when this method is called. If the stream is closed, the server MUST send
- * a `notifications/stream/end` notification after sending its messages.
+ * A request from the client to the server to resume a prior resumable request.
+ * The ID of this request must be the same as the ID of the resumable request.
+ *
+ * If the resumable request was cancelled (due to the resume policy or due to an
+ * explicit cancellation request from the client), the server should respond
+ * with an error.
  */
-export interface StreamResumeRequest extends Request {
-  method: "stream/resume";
+export interface ResumeRequest extends Request {
+  method: "requests/resume";
   params: {
     /**
-     * The ID of the stream to resume.
+     * The resume token for the original request issued by the server via a
+     * `notifications/requests/resumePolicy` notification.
      *
-     * This MUST correspond to the ID of a stream previously created. If the
-     * stream does not exist, the server MUST respond with an error.
+     * If this value does not match the token issued by the server, the server
+     * must respond with an error.
      */
-    streamId: string;
+    resumeToken: string;
   };
 }
 
 /**
- * A request from the client to the server to check the status of a stream.
+ * A request from the client to the server to get the status of a resumable
+ * request.
  *
- * The server SHOULD reset the stream's abandonment timer when responding to
- * this request.
+ * When handling this request, the server should also reset policy-related
+ * timers in the same way as for `requests/resume`.
  */
-export interface StreamPollRequest extends Request {
-  method: "stream/poll";
+export interface GetRequestStatusRequest extends Request {
+  method: "requests/getStatus";
   params: {
     /**
-     * The ID of the stream to poll.
-     *
-     * This MUST correspond to the ID of a stream previously created. If the
-     * stream does not exist, the server MUST respond with an error.
+     * The ID of the resumable request.
      */
-    streamId: string;
+    requestId: RequestId;
+
+    /**
+     * The resume token for the resumable request issued by the server via a
+     * `notifications/requests/resumePolicy` notification.
+     *
+     * If this value does not match the token issued by the server, the server
+     * must respond with an error.
+     */
+    resumeToken: string;
   };
 }
 
 /**
- * The status of a stream.
+ * A response to a `requests/getStatus` request.
  */
-export interface StreamStatus {
+export interface GetRequestStatusResult extends Result {
   /**
-   * The ID of the stream.
+   * The ID of the resumable request.
    */
-  streamId: string;
-
-  /**
-   * The current status of the stream.
-   */
-  status: "live" | "completed";
+  requestId: RequestId;
 
   /**
-   * Whether the stream has pending messages.
+   * The current status of the resumable request.
+   *
+   * - `"processing"` indicates that the server is computing a response.
+   * - `"completed"` indicates that the server has computed a final response.
+   * - `"failed"` indicates that the server has a final response, but the
+   *    response is an error.
    */
-  pendingMessages: boolean;
+  status: "processing" | "completed" | "failed";
 
   /**
-   * Whether the stream's pending messages include a server-sent request.
+   * Whether there are pending messages for the client that are related to the
+   * resumable request, such as progress notifications or sampling requests.
    */
-  hasRequest: boolean;
+  hasPendingMessage: boolean;
 
   /**
-   * Whether the stream's pending messages include an error result.
+   * Whether the server has requested additional input from the client, such as
+   * when making a sampling request.
    */
-  hasError: boolean;
+  hasInputRequest: boolean;
 }
-
-/**
- * A response to a `stream/poll` request.
- */
-export interface StreamPollResult extends Result, StreamStatus {
-}
-
-/**
- * A request from the client to the server to check the status of all current
- * streams.
- *
- * The server SHOULD reset each stream's abandonment timer when responding to
- * this request.
- */
-export interface StreamPollAllRequest extends PaginatedRequest {
-  method: "stream/poll/all";
-}
-
-/**
- * A response to a `stream/poll/all` request.
- */
-export interface StreamPollAllResult extends PaginatedResult {
-  statuses: StreamStatus[];
-}
-
-export interface StreamEndNotification extends Notification {
-  method: "notifications/stream/end";
-  params: {
-    /**
-     * The ID of the stream that ended.
-     *
-     * The MUST correspond to the ID of a stream previously created.
-     */
-    streamId: string;
-  }
-}
-
 
 /* Client messages */
 export type ClientRequest =
@@ -1550,9 +1522,8 @@ export type ClientRequest =
   | UnsubscribeRequest
   | CallToolRequest
   | ListToolsRequest
-  | StreamResumeRequest
-  | StreamPollRequest
-  | StreamPollAllRequest;
+  | ResumeRequest
+  | GetRequestStatusRequest;
 
 export type ClientNotification =
   | CancelledNotification
@@ -1581,8 +1552,7 @@ export type ServerNotification =
   | ResourceListChangedNotification
   | ToolListChangedNotification
   | PromptListChangedNotification
-  | StreamCreateNotification
-  | StreamEndNotification;
+  | ResumePolicyNotification;
 
 export type ServerResult =
   | EmptyResult
@@ -1595,5 +1565,4 @@ export type ServerResult =
   | ReadResourceResult
   | CallToolResult
   | ListToolsResult
-  | StreamPollResult
-  | StreamPollAllResult;
+  | GetRequestStatusResult;
