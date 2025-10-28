@@ -1,0 +1,150 @@
+---
+title: How to Authenticate an MCP Server for Publishing
+sidebarTitle: Authentication
+---
+
+You must authenticate an MCP server before publishing it to the MCP Registry. The MCP Registry supports different authentication methods. Which authentication method you choose determines the namespace of your server's name.
+
+If you choose GitHub-based authentication, your server's name in `server.json` **MUST** be of the form `io.github.username/*` (or `io.github.orgname/*`). For example, `io.github.alice/weather-server`.
+
+If you choose domain-based authentication, your server's name in `server.json` **MUST** be of the form `com.example.*/*`, where `com.example` is the reverse-DNS form of your domain name. For example, `io.modelcontextprotocol/everything`.
+
+| Authentication | Name Format                                     | Example Name                         |
+| -------------- | ----------------------------------------------- | ------------------------------------ |
+| GitHub-based   | `io.github.username/*` or `io.github.orgname/*` | `io.github.alice/weather-server`     |
+| domain-based   | `com.example.*/*`                               | `io.modelcontextprotocol/everything` |
+
+## GitHub Authentication
+
+GitHub authentication uses an OAuth flow initiated by the `mcp-publisher` CLI tool.
+
+To perform GitHub authentication, navigate to your server project directory and run:
+
+```bash
+mcp-publisher login github
+```
+
+You should see output like:
+
+```text Output
+Logging in with github...
+
+To authenticate, please:
+1. Go to: https://github.com/login/device
+2. Enter code: ABCD-1234
+3. Authorize this application
+Waiting for authorization...
+```
+
+Visit the link, follow the prompts, and enter the authorization code that was printed in the terminal (e.g., `ABCD-1234` in the above output). Once complete, go back to the terminal, and you should see output like:
+
+```text Output
+Successfully authenticated!
+✓ Successfully logged in
+```
+
+## DNS Authentication
+
+DNS authentication is a domain-based authentication method that relies on a DNS TXT record.
+
+To perform DNS authentication using the `mcp-publisher` CLI tool, first navigate to your server project directory and generate a public/private key pair:
+
+<CodeGroup>
+
+```bash Ed25519
+openssl genpkey -algorithm Ed25519 -out key.pem
+```
+
+```bash ECDSA P-384
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp384r1 -out key.pem
+```
+
+</CodeGroup>
+
+Then generate a TXT record and add it using your DNS provider's control panel:
+
+<CodeGroup>
+
+```bash Ed25519
+MY_DOMAIN_NAME="example.com"
+PUBLIC_KEY="$(openssl pkey -in key.pem -pubout -outform DER | tail -c 32 | base64)"
+echo "${MY_DOMAIN_NAME}. IN TXT \"v=MCPv1; k=ed25519; p=${PUBLIC_KEY}\""
+```
+
+```bash ECDSA P-384
+MY_DOMAIN_NAME="example.com"
+PUBLIC_KEY="$(openssl ec -in key.pem -text -noout -conv_form compressed | grep -A4 "pub:" | tail -n +2 | tr -d ' :\n' | xxd -r -p | base64)"
+echo "${MY_DOMAIN_NAME}. IN TXT \"v=MCPv1; k=ecdsap384; p=${PUBLIC_KEY}\""
+```
+
+</CodeGroup>
+
+It may take several minutes for the TXT record to propagate. After the TXT record has propagated, run:
+
+<CodeGroup>
+
+```bash Ed25519
+MY_DOMAIN_NAME="example.com"
+PRIVATE_KEY="$(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')"
+mcp-publisher login dns --domain "${MY_DOMAIN_NAME}" --private-key "${PRIVATE_KEY}"
+```
+
+```bash ECDSA P-384
+MY_DOMAIN_NAME="example.com"
+PRIVATE_KEY="$(openssl ec -in key.pem -noout -text | grep -A4 "priv:" | tail -n +2 | tr -d ' :\n')"
+mcp-publisher login dns --domain "${MY_DOMAIN_NAME}" --private-key "${PRIVATE_KEY}"
+```
+
+</CodeGroup>
+
+## HTTP Authentication
+
+HTTP authentication is a domain-based authentication method that relies on a `/.well-known/mcp-registry-auth` file hosted on your domain. For example, `https://example.com/.well-known/mcp-registry-auth`.
+
+To perform HTTP authentication using the `mcp-publisher` CLI tool, first navigate to your server project directory and generate a public/private key pair:
+
+<CodeGroup>
+
+```bash Ed25519
+openssl genpkey -algorithm Ed25519 -out key.pem
+```
+
+```bash ECDSA P-384
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp384r1 -out key.pem
+```
+
+</CodeGroup>
+
+Then generate an `mcp-registry-auth` file and host it at `/.well-known/mcp-registry-auth` on your domain:
+
+<CodeGroup>
+
+```bash Ed25519
+PUBLIC_KEY="$(openssl pkey -in key.pem -pubout -outform DER | tail -c 32 | base64)"
+echo "v=MCPv1; k=ed25519; p=${PUBLIC_KEY}" > mcp-registry-auth
+```
+
+```bash ECDSA P-384
+PUBLIC_KEY="$(openssl ec -in key.pem -text -noout -conv_form compressed | grep -A4 "pub:" | tail -n +2 | tr -d ' :\n' | xxd -r -p | base64)"
+echo "v=MCPv1; k=ed25519; p=${PUBLIC_KEY}" > mcp-registry-auth
+```
+
+</CodeGroup>
+
+After the file is hosted, run:
+
+<CodeGroup>
+
+```bash Ed25519
+MY_DOMAIN_NAME="example.com"
+PRIVATE_KEY="$(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')"
+mcp-publisher login http --domain "${MY_DOMAIN_NAME}" --private-key "${PRIVATE_KEY}"
+```
+
+```bash ECDSA P-384
+MY_DOMAIN_NAME="example.com"
+PRIVATE_KEY="$(openssl ec -in key.pem -noout -text | grep -A4 "priv:" | tail -n +2 | tr -d ' :\n')"
+mcp-publisher login http --domain "${MY_DOMAIN_NAME}" --private-key "${PRIVATE_KEY}"
+```
+
+</CodeGroup>
