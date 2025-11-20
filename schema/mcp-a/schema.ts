@@ -1,29 +1,20 @@
-/* JSON-RPC types - subset for initialize, tools/list, and tools/call */
+/* JSON-RPC types */
 
 /**
- * This file contains a subset of types from schema.ts, specifically:
- * - Types tagged with @category 'initialize'
- * - Types tagged with @category 'tools/list'
- * - Types tagged with @category 'tools/call'
- * - All dependencies required to make these types self-contained
+ * Refers to any valid JSON-RPC object that can be decoded off the wire, or encoded to be sent.
+ *
+ * @category JSON-RPC
  */
+export type JSONRPCMessage =
+  | JSONRPCRequest
+  | JSONRPCNotification
+  | JSONRPCResponse
+  | JSONRPCError;
 
 /** @internal */
+export const LATEST_PROTOCOL_VERSION = "DRAFT-2025-v3";
+/** @internal */
 export const JSONRPC_VERSION = "2.0";
-
-/**
- * A uniquely identifying ID for a request in JSON-RPC.
- *
- * @category Common Types
- */
-export type RequestId = string | number;
-
-/**
- * The sender or recipient of messages and data in a conversation.
- *
- * @category Common Types
- */
-export type Role = "user" | "assistant";
 
 /**
  * Common params for any request.
@@ -55,6 +46,14 @@ export interface NotificationParams {
   _meta?: { [key: string]: unknown };
 }
 
+/** @internal */
+export interface Notification {
+  method: string;
+  // Allow unofficial extensions of `Notification.params` without impacting `NotificationParams`.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params?: { [key: string]: any };
+}
+
 /**
  * @category Common Types
  */
@@ -67,6 +66,31 @@ export interface Result {
 }
 
 /**
+ * @category Common Types
+ */
+export interface Error {
+  /**
+   * The error type that occurred.
+   */
+  code: number;
+  /**
+   * A short description of the error. The message SHOULD be limited to a concise single sentence.
+   */
+  message: string;
+  /**
+   * Additional information about the error. The value of this member is defined by the sender (e.g. detailed error information, nested errors etc.).
+   */
+  data?: unknown;
+}
+
+/**
+ * A uniquely identifying ID for a request in JSON-RPC.
+ *
+ * @category Common Types
+ */
+export type RequestId = string | number;
+
+/**
  * A request that expects a response.
  *
  * @category JSON-RPC
@@ -74,6 +98,44 @@ export interface Result {
 export interface JSONRPCRequest extends Request {
   jsonrpc: typeof JSONRPC_VERSION;
   id: RequestId;
+}
+
+/**
+ * A notification which does not expect a response.
+ *
+ * @category JSON-RPC
+ */
+export interface JSONRPCNotification extends Notification {
+  jsonrpc: typeof JSONRPC_VERSION;
+}
+
+/**
+ * A successful (non-error) response to a request.
+ *
+ * @category JSON-RPC
+ */
+export interface JSONRPCResponse {
+  jsonrpc: typeof JSONRPC_VERSION;
+  id: RequestId;
+  result: Result;
+}
+
+// Standard JSON-RPC error codes
+export const PARSE_ERROR = -32700;
+export const INVALID_REQUEST = -32600;
+export const METHOD_NOT_FOUND = -32601;
+export const INVALID_PARAMS = -32602;
+export const INTERNAL_ERROR = -32603;
+
+/**
+ * A response to a request that indicates an error occurred.
+ *
+ * @category JSON-RPC
+ */
+export interface JSONRPCError {
+  jsonrpc: typeof JSONRPC_VERSION;
+  id: RequestId;
+  error: Error;
 }
 
 /**
@@ -95,6 +157,13 @@ export interface BaseMetadata {
    */
   title?: string;
 }
+
+/**
+ * The sender or recipient of messages and data in a conversation.
+ *
+ * @category Common Types
+ */
+export type Role = "user" | "assistant";
 
 /**
  * Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
@@ -535,3 +604,29 @@ export interface CallToolResult extends Result {
    */
   isError?: boolean;
 }
+
+/* Client messages */
+/** @internal */
+export type ClientRequest =
+  | InitializeRequest
+  | CallToolRequest
+  | ListToolsRequest;
+
+/** @internal */
+export type ClientNotification = unknown;
+
+/** @internal */
+export type ClientResult = unknown;
+
+/* Server messages */
+/** @internal */
+export type ServerRequest = unknown;
+
+/** @internal */
+export type ServerNotification = unknown;
+
+/** @internal */
+export type ServerResult =
+  | InitializeResult
+  | CallToolResult
+  | ListToolsResult;
