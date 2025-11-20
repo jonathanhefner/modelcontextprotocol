@@ -356,17 +356,6 @@ export interface Resource extends BaseMetadata, Icons {
 }
 
 /**
- * A resource that the server is capable of reading, included in a prompt or tool call result.
- *
- * Note: resource links returned by tools are not guaranteed to appear in the results of `resources/list` requests.
- *
- * @category Content
- */
-export interface ResourceLink extends Resource {
-  type: "resource_link";
-}
-
-/**
  * The contents of a resource, embedded into a prompt or tool call result.
  *
  * It is up to the client how best to render embedded resources for the benefit
@@ -414,75 +403,10 @@ export interface TextContent {
 }
 
 /**
- * An image provided to or from an LLM.
- *
- * @category Content
- */
-export interface ImageContent {
-  type: "image";
-
-  /**
-   * The base64-encoded image data.
-   *
-   * @format byte
-   */
-  data: string;
-
-  /**
-   * The MIME type of the image. Different providers may support different image types.
-   */
-  mimeType: string;
-
-  /**
-   * Optional annotations for the client.
-   */
-  annotations?: Annotations;
-
-  /**
-   * See [General fields: `_meta`](/specification/draft/basic/index#meta) for notes on `_meta` usage.
-   */
-  _meta?: { [key: string]: unknown };
-}
-
-/**
- * Audio provided to or from an LLM.
- *
- * @category Content
- */
-export interface AudioContent {
-  type: "audio";
-
-  /**
-   * The base64-encoded audio data.
-   *
-   * @format byte
-   */
-  data: string;
-
-  /**
-   * The MIME type of the audio. Different providers may support different audio types.
-   */
-  mimeType: string;
-
-  /**
-   * Optional annotations for the client.
-   */
-  annotations?: Annotations;
-
-  /**
-   * See [General fields: `_meta`](/specification/draft/basic/index#meta) for notes on `_meta` usage.
-   */
-  _meta?: { [key: string]: unknown };
-}
-
-/**
  * @category Content
  */
 export type ContentBlock =
   | TextContent
-  | ImageContent
-  | AudioContent
-  | ResourceLink
   | EmbeddedResource;
 
 /* Initialization */
