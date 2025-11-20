@@ -343,6 +343,17 @@ export interface Implementation extends BaseMetadata {
   websiteUrl?: string;
 }
 
+/* Ping */
+/**
+ * A ping to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
+ *
+ * @category `ping`
+ */
+export interface PingRequest extends JSONRPCRequest {
+  method: "ping";
+  params?: RequestParams;
+}
+
 /**
  * Parameters for an `initialize` request.
  *
@@ -565,6 +576,7 @@ export interface CallToolResult extends Result {
 /* Client messages */
 /** @internal */
 export type ClientRequest =
+  | PingRequest
   | InitializeRequest
   | CallToolRequest
   | ListToolsRequest;
