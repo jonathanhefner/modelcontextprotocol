@@ -19,13 +19,6 @@ export const JSONRPC_VERSION = "2.0";
 export type ProgressToken = string | number;
 
 /**
- * An opaque token used to represent a cursor for pagination.
- *
- * @category Common Types
- */
-export type Cursor = string;
-
-/**
  * A uniquely identifying ID for a request in JSON-RPC.
  *
  * @category Common Types
@@ -238,33 +231,6 @@ export interface Annotations {
    * was attached, etc.
    */
   lastModified?: string;
-}
-
-/**
- * Common parameters for paginated requests.
- *
- * @internal
- */
-export interface PaginatedRequestParams extends RequestParams {
-  /**
-   * An opaque token representing the current pagination position.
-   * If provided, the server should return results starting after this cursor.
-   */
-  cursor?: Cursor;
-}
-
-/** @internal */
-export interface PaginatedRequest extends JSONRPCRequest {
-  params?: PaginatedRequestParams;
-}
-
-/** @internal */
-export interface PaginatedResult extends Result {
-  /**
-   * An opaque token representing the pagination position after the last returned result.
-   * If present, there may be more results available.
-   */
-  nextCursor?: Cursor;
 }
 
 /**
@@ -761,8 +727,9 @@ export interface Tool extends BaseMetadata, Icons {
  *
  * @category `tools/list`
  */
-export interface ListToolsRequest extends PaginatedRequest {
+export interface ListToolsRequest extends JSONRPCRequest {
   method: "tools/list";
+  params?: RequestParams;
 }
 
 /**
@@ -770,7 +737,7 @@ export interface ListToolsRequest extends PaginatedRequest {
  *
  * @category `tools/list`
  */
-export interface ListToolsResult extends PaginatedResult {
+export interface ListToolsResult extends Result {
   tools: Tool[];
 }
 
