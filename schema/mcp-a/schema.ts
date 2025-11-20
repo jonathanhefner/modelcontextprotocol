@@ -88,70 +88,6 @@ export interface JSONRPCRequest extends Request {
 }
 
 /**
- * An optionally-sized icon that can be displayed in a user interface.
- *
- * @category Common Types
- */
-export interface Icon {
-  /**
-   * A standard URI pointing to an icon resource. May be an HTTP/HTTPS URL or a
-   * `data:` URI with Base64-encoded image data.
-   *
-   * Consumers SHOULD takes steps to ensure URLs serving icons are from the
-   * same domain as the client/server or a trusted domain.
-   *
-   * Consumers SHOULD take appropriate precautions when consuming SVGs as they can contain
-   * executable JavaScript.
-   *
-   * @format uri
-   */
-  src: string;
-
-  /**
-   * Optional MIME type override if the source MIME type is missing or generic.
-   * For example: `"image/png"`, `"image/jpeg"`, or `"image/svg+xml"`.
-   */
-  mimeType?: string;
-
-  /**
-   * Optional array of strings that specify sizes at which the icon can be used.
-   * Each string should be in WxH format (e.g., `"48x48"`, `"96x96"`) or `"any"` for scalable formats like SVG.
-   *
-   * If not provided, the client should assume that the icon can be used at any size.
-   */
-  sizes?: string[];
-
-  /**
-   * Optional specifier for the theme this icon is designed for. `light` indicates
-   * the icon is designed to be used with a light background, and `dark` indicates
-   * the icon is designed to be used with a dark background.
-   *
-   * If not provided, the client should assume the icon can be used with any theme.
-   */
-  theme?: "light" | "dark";
-}
-
-/**
- * Base interface to add `icons` property.
- *
- * @internal
- */
-export interface Icons {
-  /**
-   * Optional set of sized icons that the client can display in a user interface.
-   *
-   * Clients that support rendering icons MUST support at least the following MIME types:
-   * - `image/png` - PNG images (safe, universal compatibility)
-   * - `image/jpeg` (and `image/jpg`) - JPEG images (safe, universal compatibility)
-   *
-   * Clients that support rendering icons SHOULD also support:
-   * - `image/svg+xml` - SVG images (scalable but requires security precautions)
-   * - `image/webp` - WebP images (modern, efficient format)
-   */
-  icons?: Icon[];
-}
-
-/**
  * Base interface for metadata with name (identifier) and title (display name) properties.
  *
  * @internal
@@ -260,7 +196,7 @@ export interface BlobResourceContents extends ResourceContents {
  *
  * @category `resources/list`
  */
-export interface Resource extends BaseMetadata, Icons {
+export interface Resource extends BaseMetadata {
   /**
    * The URI of this resource.
    *
@@ -449,7 +385,7 @@ export interface ServerCapabilities {
  *
  * @category `initialize`
  */
-export interface Implementation extends BaseMetadata, Icons {
+export interface Implementation extends BaseMetadata {
   version: string;
 
   /**
@@ -577,7 +513,7 @@ export interface ToolAnnotations {
  *
  * @category `tools/list`
  */
-export interface Tool extends BaseMetadata, Icons {
+export interface Tool extends BaseMetadata {
   /**
    * A human-readable description of the tool.
    *
