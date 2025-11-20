@@ -91,9 +91,7 @@ export interface BaseMetadata {
    * Intended for UI and end-user contexts — optimized to be human-readable and easily understood,
    * even by those unfamiliar with domain-specific terminology.
    *
-   * If not provided, the name should be used for display (except for Tool,
-   * where `annotations.title` should be given precedence over using `name`,
-   * if present).
+   * If not provided, the name should be used for display.
    */
   title?: string;
 }
@@ -384,7 +382,7 @@ export interface InitializeResult extends Result {
  *
  * NOTE: all properties in ToolAnnotations are **hints**.
  * They are not guaranteed to provide a faithful description of
- * tool behavior (including descriptive properties like `title`).
+ * tool behavior.
  *
  * Clients should never make tool use decisions based on ToolAnnotations
  * received from untrusted servers.
@@ -392,11 +390,6 @@ export interface InitializeResult extends Result {
  * @category `tools/list`
  */
 export interface ToolAnnotations {
-  /**
-   * A human-readable title for the tool.
-   */
-  title?: string;
-
   /**
    * If true, the tool does not modify its environment.
    *
@@ -474,8 +467,6 @@ export interface Tool extends BaseMetadata {
 
   /**
    * Optional additional tool information.
-   *
-   * Display name precedence order is: title, annotations.title, then name.
    */
   annotations?: ToolAnnotations;
 
