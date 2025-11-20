@@ -235,49 +235,6 @@ export interface BlobResourceContents extends ResourceContents {
 }
 
 /**
- * A known resource that the server is capable of reading.
- *
- * @category `resources/list`
- */
-export interface Resource extends BaseMetadata {
-  /**
-   * The URI of this resource.
-   *
-   * @format uri
-   */
-  uri: string;
-
-  /**
-   * A description of what this resource represents.
-   *
-   * This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
-   */
-  description?: string;
-
-  /**
-   * The MIME type of this resource, if known.
-   */
-  mimeType?: string;
-
-  /**
-   * Optional annotations for the client.
-   */
-  annotations?: Annotations;
-
-  /**
-   * The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.
-   *
-   * This can be used by Hosts to display file sizes and estimate context window usage.
-   */
-  size?: number;
-
-  /**
-   * See [General fields: `_meta`](/specification/draft/basic/index#meta) for notes on `_meta` usage.
-   */
-  _meta?: { [key: string]: unknown };
-}
-
-/**
  * The contents of a resource, embedded into a prompt or tool call result.
  *
  * It is up to the client how best to render embedded resources for the benefit
