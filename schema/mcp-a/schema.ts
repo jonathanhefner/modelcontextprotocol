@@ -33,34 +33,11 @@ export type RequestId = string | number;
 export type Role = "user" | "assistant";
 
 /**
- * Metadata for augmenting a request with task execution.
- * Include this in the `task` field of the request parameters.
- *
- * @category `tasks`
- */
-export interface TaskMetadata {
-  /**
-   * Requested duration in milliseconds to retain task from creation.
-   */
-  ttl?: number;
-}
-
-/**
  * Common params for any request.
  *
  * @internal
  */
 export interface RequestParams {
-  /**
-   * If specified, the caller is requesting task-augmented execution for this request.
-   * The request will return a CreateTaskResult immediately, and the actual result can be
-   * retrieved later via tasks/result.
-   *
-   * Task augmentation is subject to capability negotiation - receivers MUST declare support
-   * for task augmentation of specific request types in their capabilities.
-   */
-  task?: TaskMetadata;
-
   /**
    * See [General fields: `_meta`](/specification/draft/basic/index#meta) for notes on `_meta` usage.
    */
@@ -414,43 +391,6 @@ export interface ClientCapabilities {
    * Present if the client supports elicitation from the server.
    */
   elicitation?: { form?: object; url?: object };
-
-  /**
-   * Present if the client supports task-augmented requests.
-   */
-  tasks?: {
-    /**
-     * Whether this client supports tasks/list.
-     */
-    list?: object;
-    /**
-     * Whether this client supports tasks/cancel.
-     */
-    cancel?: object;
-    /**
-     * Specifies which request types can be augmented with tasks.
-     */
-    requests?: {
-      /**
-       * Task support for sampling-related requests.
-       */
-      sampling?: {
-        /**
-         * Whether the client supports task-augmented sampling/createMessage requests.
-         */
-        createMessage?: object;
-      };
-      /**
-       * Task support for elicitation-related requests.
-       */
-      elicitation?: {
-        /**
-         * Whether the client supports task-augmented elicitation/create requests.
-         */
-        create?: object;
-      };
-    };
-  };
 }
 
 /**
@@ -501,33 +441,6 @@ export interface ServerCapabilities {
      * Whether this server supports notifications for changes to the tool list.
      */
     listChanged?: boolean;
-  };
-  /**
-   * Present if the server supports task-augmented requests.
-   */
-  tasks?: {
-    /**
-     * Whether this server supports tasks/list.
-     */
-    list?: object;
-    /**
-     * Whether this server supports tasks/cancel.
-     */
-    cancel?: object;
-    /**
-     * Specifies which request types can be augmented with tasks.
-     */
-    requests?: {
-      /**
-       * Task support for tool-related requests.
-       */
-      tools?: {
-        /**
-         * Whether the server supports task-augmented tools/call requests.
-         */
-        call?: object;
-      };
-    };
   };
 }
 
@@ -657,19 +570,6 @@ export interface ToolAnnotations {
    * Default: true
    */
   openWorldHint?: boolean;
-
-  /**
-   * Indicates whether this tool supports task-augmented execution.
-   * This allows clients to handle long-running operations through polling
-   * the task system.
-   *
-   * - "never": Tool does not support task-augmented execution (default when absent)
-   * - "optional": Tool may support task-augmented execution
-   * - "always": Tool requires task-augmented execution
-   *
-   * Default: "never"
-   */
-  taskHint?: "never" | "optional" | "always";
 }
 
 /**
