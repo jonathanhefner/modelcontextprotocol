@@ -289,33 +289,6 @@ export interface ClientCapabilities {
    * Experimental, non-standard capabilities that the client supports.
    */
   experimental?: { [key: string]: object };
-  /**
-   * Present if the client supports listing roots.
-   */
-  roots?: {
-    /**
-     * Whether the client supports notifications for changes to the roots list.
-     */
-    listChanged?: boolean;
-  };
-  /**
-   * Present if the client supports sampling from an LLM.
-   */
-  sampling?: {
-    /**
-     * Whether the client supports context inclusion via includeContext parameter.
-     * If not declared, servers SHOULD only use `includeContext: "none"` (or omit it).
-     */
-    context?: object;
-    /**
-     * Whether the client supports tool use via tools and toolChoice parameters.
-     */
-    tools?: object;
-  };
-  /**
-   * Present if the client supports elicitation from the server.
-   */
-  elicitation?: { form?: object; url?: object };
 }
 
 /**
