@@ -110,19 +110,6 @@ export interface Annotations {
   audience?: Role[];
 
   /**
-   * Describes how important this data is for operating the server.
-   *
-   * A value of 1 means "most important," and indicates that the data is
-   * effectively required, while 0 means "least important," and indicates that
-   * the data is entirely optional.
-   *
-   * @TJS-type number
-   * @minimum 0
-   * @maximum 1
-   */
-  priority?: number;
-
-  /**
    * The moment the resource was last modified, as an ISO 8601 formatted string.
    *
    * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
