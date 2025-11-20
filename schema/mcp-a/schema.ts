@@ -329,44 +329,9 @@ export interface ServerCapabilities {
    */
   experimental?: { [key: string]: object };
   /**
-   * Present if the server supports sending log messages to the client.
-   */
-  logging?: object;
-  /**
-   * Present if the server supports argument autocompletion suggestions.
-   */
-  completions?: object;
-  /**
-   * Present if the server offers any prompt templates.
-   */
-  prompts?: {
-    /**
-     * Whether this server supports notifications for changes to the prompt list.
-     */
-    listChanged?: boolean;
-  };
-  /**
-   * Present if the server offers any resources to read.
-   */
-  resources?: {
-    /**
-     * Whether this server supports subscribing to resource updates.
-     */
-    subscribe?: boolean;
-    /**
-     * Whether this server supports notifications for changes to the resource list.
-     */
-    listChanged?: boolean;
-  };
-  /**
    * Present if the server offers any tools to call.
    */
-  tools?: {
-    /**
-     * Whether this server supports notifications for changes to the tool list.
-     */
-    listChanged?: boolean;
-  };
+  tools?: object;
 }
 
 /**
