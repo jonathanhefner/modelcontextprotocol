@@ -604,11 +604,6 @@ export interface CallToolResult extends Result {
   content: ContentBlock[];
 
   /**
-   * An optional JSON object that represents the structured result of the tool call.
-   */
-  structuredContent?: { [key: string]: unknown };
-
-  /**
    * Whether the tool call ended in an error.
    *
    * If not set, this is assumed to be false (the call was successful).
