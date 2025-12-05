@@ -90,7 +90,7 @@ async function agenticSampling(
       messages: conversation,
       tools,
       toolChoice: { mode: "auto" },
-      maxTokens: 4096
+      maxTokens: 4096,
     });
 
     content = Array.isArray(content) ? content : [content];
@@ -112,7 +112,7 @@ async function agenticSampling(
       toolUses.map(async (toolUse) => ({
         type: "tool_result",
         toolUseId: toolUse.id,
-        content: [await executeTool(toolUse.name, toolUse.input)]
+        content: [await executeTool(toolUse.name, toolUse.input)],
       }))
     );
 
