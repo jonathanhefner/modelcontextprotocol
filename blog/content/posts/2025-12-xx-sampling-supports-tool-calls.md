@@ -7,7 +7,7 @@ tags = ['sampling', 'tools', 'agentic']
 
 Tool use transformed LLMs from sophisticated text generators into agents capable of taking action in the world. Before tool use, you could ask an LLM about the weather and get a plausible-sounding guess. With tool use, it can actually check.
 
-MCP brought that same transformation to the ecosystem level—a standard way for agents to discover and invoke tools across any number of servers. But there was an asymmetry hiding in the architecture. While LLMs could be agentic, the tools they called could not. Even tools that used MCP's sampling feature to request LLM completions were limited to simple, one-shot text generation.
+MCP extended that power to the ecosystem level — a standard way for agents to discover and invoke tools across any number of servers. But there was an asymmetry hiding in the architecture. While LLMs could be agentic, the tools they called could not. Even tools that used MCP's sampling feature to request LLM completions were limited to simple, one-shot text generation.
 
 [SEP-1577](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1577) has changed that. MCP sampling now supports tool calling, which means tools themselves can drive agentic workflows.
 
