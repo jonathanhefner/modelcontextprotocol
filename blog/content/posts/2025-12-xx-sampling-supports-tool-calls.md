@@ -86,31 +86,31 @@ async function agenticSampling(
   const conversation = [...messages];
 
   for (let i = 0; i < maxIterations; i++) {
-    let { content, stopReason } = await mcpServer.server.createMessage({
+    const { content, stopReason } = await mcpServer.server.createMessage({
       messages: conversation,
       tools,
       toolChoice: { mode: "auto" },
       maxTokens: 4096,
     });
 
-    content = Array.isArray(content) ? content : [content];
+    const contentArray = Array.isArray(content) ? content : [content];
 
-    conversation.push({ role: "assistant", content });
+    conversation.push({ role: "assistant", content: contentArray });
 
     // Any stop reason other than "toolUse" means the LLM is done
     if (stopReason !== "toolUse") {
-      return content
+      return contentArray
         .filter((c): c is TextContent => c.type === "text")
         .map((c) => c.text)
         .join("");
     }
 
     // Execute tool calls and collect results
-    const toolUses = content.filter((c): c is ToolUseContent => c.type === "tool_use");
+    const toolUses = contentArray.filter((c): c is ToolUseContent => c.type === "tool_use");
 
     const toolResults = await Promise.all(
       toolUses.map(async (toolUse) => ({
-        type: "tool_result",
+        type: "tool_result" as const,
         toolUseId: toolUse.id,
         content: [await executeTool(toolUse.name, toolUse.input)],
       }))
