@@ -178,7 +178,3 @@ To experiment with agentic sampling, update to an SDK version that includes thes
 ## Acknowledgements
 
 Thanks to [Olivier Chafik](https://github.com/ochafik) for authoring SEP-1577 and driving it through the proposal process, and to [Basil Hosmer](https://github.com/bhosmer-ant) for sponsoring the proposal. Thanks also to the community members who provided feedback during the review period.
-
----
-
-*Tags: mcp, sampling, tools, agentic, sep*
