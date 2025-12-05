@@ -19,7 +19,7 @@ This works well when tools are simple functions. But what if a tool needs to be 
 
 MCP's sampling feature was designed for exactly this case. It allows servers to request LLM completions from the client, using the client's model access and respecting user oversight. A tool implementation could use sampling to get help from an LLM.
 
-But sampling, as originally specified, only supported simple text generation. A server could send messages and get a response back, but that was it. If the LLM needed to gather information, take intermediate actions, or iterate on its approach, it had no way to do so. The sampling request went in, a text response came out, and the interaction was over.
+But sampling, as originally specified, only supported simple text generation. A server could make multiple sampling calls and chain them together with code—but that code couldn't reason. It could follow predetermined logic paths, but it couldn't reason about what was missing or adapt on the fly. The server could ask the LLM questions, but the LLM couldn't drive the investigation. This effectively capped sampling's power at pre-tool-calling levels—tools could get answers from an LLM, but they couldn't delegate agentic behavior to one.
 
 This meant tools couldn't be truly agentic. They could *ask* an LLM for help, but that LLM couldn't *do* anything—it could only talk.
 
