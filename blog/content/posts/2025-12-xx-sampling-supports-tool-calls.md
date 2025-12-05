@@ -75,7 +75,7 @@ The key insight is that the server drives the tool loop. The host application's 
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { SamplingMessage, Tool, TextContent } from "@modelcontextprotocol/sdk/types.js";
+import type { SamplingMessage, Tool, TextContent, ToolUseContent } from "@modelcontextprotocol/sdk/types.js";
 
 async function agenticSampling(
   mcpServer: McpServer,
@@ -100,13 +100,13 @@ async function agenticSampling(
     // Any stop reason other than "toolUse" means the LLM is done
     if (stopReason !== "toolUse") {
       return content
-        .filter(c => c.type === "text")
-        .map(c => c.text)
+        .filter((c): c is TextContent => c.type === "text")
+        .map((c) => c.text)
         .join("");
     }
 
     // Execute tool calls and collect results
-    const toolUses = content.filter(c => c.type === "tool_use");
+    const toolUses = content.filter((c): c is ToolUseContent => c.type === "tool_use");
 
     const toolResults = await Promise.all(
       toolUses.map(async (toolUse) => ({
