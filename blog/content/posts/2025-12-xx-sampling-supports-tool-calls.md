@@ -138,7 +138,7 @@ With agentic sampling, tools can be as sophisticated as the agents that call the
 
 **Data analysis tools** can explore datasets, form hypotheses, run queries to test them, and produce insights—not just execute predetermined queries.
 
-**Document processing tools** can read documents, extract information, ask clarifying questions (via elicitation), and produce structured outputs—handling ambiguity internally.
+**Document processing tools** can read documents, extract information, and produce structured outputs—handling complexity internally through iterative reasoning.
 
 The pattern extends naturally. Any tool that would benefit from reasoning, iteration, or multi-step workflows can now implement them directly.
 
