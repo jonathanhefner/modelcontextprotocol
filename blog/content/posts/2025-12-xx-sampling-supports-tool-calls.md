@@ -77,11 +77,12 @@ The key insight is that the server drives the tool loop. The host application's 
 async function agenticSampling(
   server: Server,
   messages: SamplingMessage[],
-  tools: Tool[]
+  tools: Tool[],
+  maxIterations = 10
 ): Promise<string> {
   const conversation = [...messages];
 
-  while (true) {
+  for (let i = 0; i < maxIterations; i++) {
     const result = await server.createMessage({
       messages: conversation,
       tools,
@@ -89,13 +90,12 @@ async function agenticSampling(
       maxTokens: 4096
     });
 
-    // Add the assistant's response to the conversation
     conversation.push({
       role: "assistant",
       content: result.content
     });
 
-    // If the LLM is done, extract and return the text
+    // Any stop reason other than "toolUse" means the LLM is done
     if (result.stopReason !== "toolUse") {
       const content = Array.isArray(result.content)
         ? result.content
@@ -113,18 +113,19 @@ async function agenticSampling(
 
     const toolResults = await Promise.all(
       toolUses.map(async (toolUse) => ({
-        type: "tool_result" as const,
+        type: "tool_result",
         toolUseId: toolUse.id,
         content: [await executeTool(toolUse.name, toolUse.input)]
       }))
     );
 
-    // Add results and continue the loop
     conversation.push({
       role: "user",
       content: toolResults
     });
   }
+
+  throw new Error("Max iterations reached");
 }
 ```
 
