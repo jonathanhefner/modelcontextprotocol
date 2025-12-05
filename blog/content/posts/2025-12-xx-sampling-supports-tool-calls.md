@@ -166,10 +166,12 @@ If your server currently uses `includeContext`, consider migrating to explicit c
 
 ## Getting started
 
-SEP-1577 targets the 2025-11-25 specification version. SDK support is available in:
+SEP-1577 is part of MCP version `2025-11-25`. See the [sampling specification](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling) for full protocol details.
 
-- **TypeScript SDK**: [PR #1101](https://github.com/modelcontextprotocol/typescript-sdk/pull/1101)
-- **Python SDK**: [PR #1594](https://github.com/modelcontextprotocol/python-sdk/pull/1594)
+SDK support is available in:
+
+- **TypeScript SDK** — See [PR #1101](https://github.com/modelcontextprotocol/typescript-sdk/pull/1101)
+- **Python SDK** — See [PR #1594](https://github.com/modelcontextprotocol/python-sdk/pull/1594)
 
 To experiment with agentic sampling, update to an SDK version that includes these changes and ensure you're connecting to a client that advertises the `sampling.tools` capability.
 
