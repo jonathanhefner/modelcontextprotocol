@@ -158,7 +158,7 @@ Servers should check for this capability at connection time. For tools that requ
 
 ## A note on `includeContext`
 
-SEP-1577 also soft-deprecates the `includeContext` parameter. This parameter—which allowed servers to request that the client include conversation context from the current or all connected servers—had ambiguous semantics that made it difficult for clients to implement consistently. This ambiguity contributed to low adoption of sampling overall.
+SEP-1577 also soft-deprecates the `"thisServer"` and `"allServers"` values of the `includeContext` parameter. These values—which allowed servers to request that the client include conversation context from the current or all connected servers—had ambiguous semantics that made it difficult for clients to implement consistently. This ambiguity contributed to low adoption of sampling overall.
 
 The `"thisServer"` and `"allServers"` values are now fenced behind a separate `sampling.context` capability. Servers should avoid using them, and they may be removed in a future specification version.
 
