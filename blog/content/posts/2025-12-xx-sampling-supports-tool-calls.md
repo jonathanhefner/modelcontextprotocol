@@ -9,7 +9,7 @@ Tool use transformed LLMs from sophisticated text generators into agents capable
 
 MCP brought that same transformation to the ecosystem level—a standard way for agents to discover and invoke tools across any number of servers. But there was an asymmetry hiding in the architecture. While LLMs could be agentic, the tools they called could not. Even tools that used MCP's sampling feature to request LLM completions were limited to simple, one-shot text generation.
 
-With [SEP-1577](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1577), that changes. MCP sampling now supports tool calling, which means tools themselves can drive agentic workflows. The loop is finally closed.
+[SEP-1577](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1577) has changed that. MCP sampling now supports tool calling, which means tools themselves can drive agentic workflows.
 
 ## The gap in the architecture
 
@@ -60,16 +60,16 @@ This is the standard agentic loop, but now it can happen *inside* a tool impleme
 
 Here's the complete flow:
 
-1. An LLM (via an MCP client) calls a tool on your server
-2. Your tool implementation needs LLM capabilities to do its job
-3. Your server calls `sampling/createMessage` with the `tools` parameter
-4. The client's LLM reasons and decides to call one of your tools
-5. The response comes back with `stopReason: "toolUse"`
-6. Your server executes the tool and gets a result
-7. Your server calls `sampling/createMessage` again, including the tool result
-8. Steps 4-7 repeat until the LLM returns `stopReason: "endTurn"`
-9. Your tool returns its result to the original LLM
-10. That LLM can now call more tools—each potentially agentic themselves
+1. An LLM (via an MCP client) calls a tool on your server.
+2. Your tool implementation needs LLM capabilities to do its job.
+3. Your server calls `sampling/createMessage` with the `tools` parameter.
+4. The client's LLM reasons and decides to call one of your tools.
+5. The response comes back with `stopReason: "toolUse"`.
+6. Your server executes the tool and gets a result.
+7. Your server calls `sampling/createMessage` again, including the tool result.
+8. Steps 4-7 repeat until the LLM returns `stopReason: "endTurn"`.
+9. Your tool returns its result to the original LLM.
+10. That LLM can now call more tools—each potentially agentic themselves.
 
 The key insight is that the server drives the tool loop. The client's job is to provide LLM access and maintain human oversight. The server decides what tools to expose, executes them when called, and determines when the loop is complete.
 
@@ -156,7 +156,7 @@ interface ClientCapabilities {
 
 Servers should check for this capability before sending tools in sampling requests. If the capability isn't present, you can fall back to text-only sampling or inform the user that full functionality requires a client update.
 
-## A note on includeContext
+## A note on `includeContext`
 
 SEP-1577 also soft-deprecates the `includeContext` parameter. This parameter—which allowed servers to request that the client include conversation context from the current or all connected servers—had ambiguous semantics that made it difficult for clients to implement consistently. This ambiguity contributed to low adoption of sampling overall.
 
