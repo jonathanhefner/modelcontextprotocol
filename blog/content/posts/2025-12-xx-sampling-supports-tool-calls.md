@@ -154,7 +154,7 @@ interface ClientCapabilities {
 }
 ```
 
-Servers should check for this capability before sending tools in sampling requests. If the capability isn't present, you can fall back to text-only sampling or inform the user that full functionality requires a client update.
+Servers should check for this capability at connection time. For tools that require agentic sampling to function, the simplest approach is to omit them from `tools/list` when the capability is absent — the client will only see tools that will actually work. For tools that can function with degraded capability, consider implementing a graceful fallback to text-only sampling, perhaps noting the limitation in the tool's output so the outer LLM has context.
 
 ## A note on `includeContext`
 
