@@ -60,10 +60,10 @@ This is the standard agentic loop, but now it can happen *inside* a tool impleme
 
 Here's the complete flow:
 
-1. An LLM (via an MCP client) calls a tool on your server.
+1. A host application's LLM calls a tool on your server.
 2. Your tool implementation needs LLM capabilities to do its job.
 3. Your server calls `sampling/createMessage` with the `tools` parameter.
-4. The client's LLM reasons and decides to call one of your tools.
+4. The LLM reasons and decides to call one of your tools.
 5. The response comes back with `stopReason: "toolUse"`.
 6. Your server executes the tool and gets a result.
 7. Your server calls `sampling/createMessage` again, including the tool result.
@@ -71,7 +71,7 @@ Here's the complete flow:
 9. Your tool returns its result to the original LLM.
 10. That LLM can now call more tools — each potentially agentic themselves.
 
-The key insight is that the server drives the tool loop. The client's job is to provide LLM access and maintain human oversight. The server decides what tools to expose, executes them when called, and determines when the loop is complete.
+The key insight is that the server drives the tool loop. The host application's job is to provide LLM access and maintain human oversight. The server decides what tools to expose, executes them when called, and determines when the loop is complete.
 
 ```typescript
 async function agenticSampling(
