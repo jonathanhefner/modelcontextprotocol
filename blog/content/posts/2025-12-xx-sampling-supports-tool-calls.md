@@ -74,8 +74,11 @@ Here's the complete flow:
 The key insight is that the server drives the tool loop. The host application's job is to provide LLM access and maintain human oversight. The server decides what tools to expose, executes them when called, and determines when the loop is complete.
 
 ```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { SamplingMessage, Tool, TextContent } from "@modelcontextprotocol/sdk/types.js";
+
 async function agenticSampling(
-  server: Server,
+  mcpServer: McpServer,
   messages: SamplingMessage[],
   tools: Tool[],
   maxIterations = 10
@@ -83,23 +86,24 @@ async function agenticSampling(
   const conversation = [...messages];
 
   for (let i = 0; i < maxIterations; i++) {
-    const result = await server.createMessage({
+    const result = await mcpServer.server.createMessage({
       messages: conversation,
       tools,
       toolChoice: { mode: "auto" },
       maxTokens: 4096
     });
 
+    // Normalize content to array (may be single or array when using tools)
+    const content = Array.isArray(result.content)
+      ? result.content
+      : [result.content];
+
     conversation.push({
       role: "assistant",
-      content: result.content
+      content
     });
 
-    // Any stop reason other than "toolUse" means the LLM is done
     if (result.stopReason !== "toolUse") {
-      const content = Array.isArray(result.content)
-        ? result.content
-        : [result.content];
       return content
         .filter(c => c.type === "text")
         .map(c => c.text)
@@ -107,9 +111,7 @@ async function agenticSampling(
     }
 
     // Execute tool calls and collect results
-    const toolUses = Array.isArray(result.content)
-      ? result.content.filter(c => c.type === "tool_use")
-      : [];
+    const toolUses = content.filter(c => c.type === "tool_use");
 
     const toolResults = await Promise.all(
       toolUses.map(async (toolUse) => ({
@@ -126,6 +128,14 @@ async function agenticSampling(
   }
 
   throw new Error("Max iterations reached");
+}
+
+// Dispatch to your tool implementations
+async function executeTool(
+  name: string,
+  input: Record<string, unknown>
+): Promise<TextContent> {
+  // ...
 }
 ```
 
