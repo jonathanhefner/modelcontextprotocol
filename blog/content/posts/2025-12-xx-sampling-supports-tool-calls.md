@@ -98,10 +98,7 @@ async function agenticSampling(
       ? result.content
       : [result.content];
 
-    conversation.push({
-      role: "assistant",
-      content
-    });
+    conversation.push({ role: "assistant", content });
 
     if (result.stopReason !== "toolUse") {
       return content
@@ -121,21 +118,17 @@ async function agenticSampling(
       }))
     );
 
-    conversation.push({
-      role: "user",
-      content: toolResults
-    });
+    conversation.push({ role: "user", content: toolResults });
   }
 
   throw new Error("Max iterations reached");
 }
 
-// Dispatch to your tool implementations
 async function executeTool(
   name: string,
   input: Record<string, unknown>
 ): Promise<TextContent> {
-  // ...
+  // Dispatch to your tool implementations...
 }
 ```
 
