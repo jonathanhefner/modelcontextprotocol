@@ -28,7 +28,7 @@ This meant tools couldn't be truly agentic. They could *ask* an LLM for help, bu
 SEP-1577 introduces two new parameters to the `sampling/createMessage` request: `tools` and `toolChoice`. These let a server provide tool definitions when requesting a completion, and the LLM can call those tools as part of its response.
 
 ```typescript
-const result = await client.createMessage({
+const result = await mcpServer.server.createMessage({
   messages: [{
     role: "user",
     content: {
@@ -75,14 +75,14 @@ The key insight is that the server drives the tool loop. The client's job is to 
 
 ```typescript
 async function agenticSampling(
-  client: Client,
+  server: Server,
   messages: SamplingMessage[],
   tools: Tool[]
 ): Promise<string> {
   const conversation = [...messages];
 
   while (true) {
-    const result = await client.createMessage({
+    const result = await server.createMessage({
       messages: conversation,
       tools,
       toolChoice: { mode: "auto" },
