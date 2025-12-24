@@ -338,6 +338,9 @@ export interface CancelledNotificationParams extends NotificationParams {
  *
  * For task cancellation, use the {@link CancelTaskRequest | tasks/cancel} request instead of this notification.
  *
+ * @example User-requested cancellation
+ * {@includeCode ./examples/CancelledNotification/user-requested-cancellation.json}
+ *
  * @category `notifications/cancelled`
  */
 export interface CancelledNotification extends JSONRPCNotification {
