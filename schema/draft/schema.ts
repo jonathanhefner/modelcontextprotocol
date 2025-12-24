@@ -770,6 +770,9 @@ export interface ProgressNotificationParams extends NotificationParams {
 /**
  * An out-of-band notification used to inform the receiver of a progress update for a long-running request.
  *
+ * @example Progress message
+ * {@includeCode ./examples/ProgressNotification/progress-message.json}
+ *
  * @category `notifications/progress`
  */
 export interface ProgressNotification extends JSONRPCNotification {
