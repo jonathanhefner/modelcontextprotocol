@@ -1343,7 +1343,12 @@ export interface GetPromptResultResponse extends JSONRPCResultResponse {
  */
 export interface Prompt extends BaseMetadata, Icons {
   /**
-   * An optional description of what this prompt provides
+   * A unique identifier (within this server) for the prompt.
+   */
+  name: string;
+
+  /**
+   * An optional description of what this prompt provides.
    */
   description?: string;
 
@@ -1427,6 +1432,7 @@ export interface EmbeddedResource {
 
   _meta?: MetaObject;
 }
+
 /**
  * An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
  *
