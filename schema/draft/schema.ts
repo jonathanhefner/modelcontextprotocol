@@ -1656,6 +1656,43 @@ export interface ToolExecution {
 }
 
 /**
+ * A JSON Schema object defining the expected parameters for a tool.
+ *
+ * @category `tools/list`
+ */
+export interface ToolInputSchema {
+  /**
+   * Defaults to JSON Schema 2020-12 when not provided.
+   *
+   * @see [JSON Schema Usage](/specification/draft/basic#json-schema-usage)
+   */
+  $schema?: string;
+  type: "object";
+  properties?: { [key: string]: object };
+  required?: string[];
+}
+
+/**
+ * A JSON Schema object defining the structure of a tool's output returned in
+ * {@link CallToolResult.structuredContent}.
+ *
+ * Currently restricted to `type: "object"` at the root level.
+ *
+ * @category `tools/list`
+ */
+export interface ToolOutputSchema {
+  /**
+   * Defaults to JSON Schema 2020-12 when not provided.
+   *
+   * @see [JSON Schema Usage](/specification/draft/basic#json-schema-usage)
+   */
+  $schema?: string;
+  type: "object";
+  properties?: { [key: string]: object };
+  required?: string[];
+}
+
+/**
  * Definition for a tool the client can call.
  *
  * @example With default 2020-12 input schema
@@ -1681,14 +1718,12 @@ export interface Tool extends BaseMetadata, Icons {
   description?: string;
 
   /**
-   * A JSON Schema object defining the expected parameters for the tool.
+   * Defines the arguments the tool accepts.
+   *
+   * Used by LLMs to determine what arguments to provide when calling this tool.
+   * Tools accepting no arguments should use `{ type: "object", additionalProperties: false }`.
    */
-  inputSchema: {
-    $schema?: string;
-    type: "object";
-    properties?: { [key: string]: object };
-    required?: string[];
-  };
+  inputSchema: ToolInputSchema;
 
   /**
    * Execution-related properties for this tool.
@@ -1696,18 +1731,11 @@ export interface Tool extends BaseMetadata, Icons {
   execution?: ToolExecution;
 
   /**
-   * An optional JSON Schema object defining the structure of the tool's output returned in
-   * the structuredContent field of a {@link CallToolResult}.
+   * When present, the tool MUST return `structuredContent` in its result conforming to this schema. Clients SHOULD validate structured results against this schema.
    *
-   * Defaults to JSON Schema 2020-12 when no explicit `$schema` is provided.
-   * Currently restricted to `type: "object"` at the root level.
+   * Enables clients to programmatically process tool results without parsing unstructured content.
    */
-  outputSchema?: {
-    $schema?: string;
-    type: "object";
-    properties?: { [key: string]: object };
-    required?: string[];
-  };
+  outputSchema?: ToolOutputSchema;
 
   /**
    * Optional additional tool information.
