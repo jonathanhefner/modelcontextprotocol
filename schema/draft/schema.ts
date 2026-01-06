@@ -1711,6 +1711,20 @@ export interface ToolOutputSchema {
  */
 export interface Tool extends BaseMetadata, Icons {
   /**
+   * The name of the tool.
+   *
+   * - Tool names SHOULD be between 1 and 128 characters in length (inclusive).
+   * - Tool names SHOULD be considered case-sensitive.
+   * - The following SHOULD be the only allowed characters: uppercase and lowercase
+   *   ASCII letters (A-Z, a-z), digits (0-9), underscore (_), hyphen (-), and dot (.)
+   * - Tool names SHOULD NOT contain spaces, commas, or other special characters.
+   * - Tool names SHOULD be unique within a server.
+   *
+   * Example valid tool names: `getUser`, `DATA_EXPORT_v2`, `admin.tools.list`
+   */
+  name: string;
+
+  /**
    * A human-readable description of the tool.
    *
    * This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.

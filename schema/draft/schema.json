@@ -3994,68 +3994,16 @@
                     "type": "array"
                 },
                 "inputSchema": {
-                    "description": "A JSON Schema object defining the expected parameters for the tool.",
-                    "properties": {
-                        "$schema": {
-                            "type": "string"
-                        },
-                        "properties": {
-                            "additionalProperties": {
-                                "additionalProperties": true,
-                                "properties": {},
-                                "type": "object"
-                            },
-                            "type": "object"
-                        },
-                        "required": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        "type": {
-                            "const": "object",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "type"
-                    ],
-                    "type": "object"
+                    "$ref": "#/$defs/ToolInputSchema",
+                    "description": "Defines the arguments the tool accepts.\n\nUsed by LLMs to determine what arguments to provide when calling this tool.\nTools accepting no arguments should use `{ type: \"object\", additionalProperties: false }`."
                 },
                 "name": {
-                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "description": "The name of the tool.\n\n- Tool names **SHOULD** be between 1 and 128 characters in length (inclusive).\n- Tool names **SHOULD** be considered case-sensitive.\n- The following **SHOULD** be the only allowed characters: uppercase and lowercase\n  ASCII letters (A-Z, a-z), digits (0-9), underscore (_), hyphen (-), and dot (.)\n- Tool names **SHOULD NOT** contain spaces, commas, or other special characters.\n- Tool names **SHOULD** be unique within a server.\n\nExample valid tool names: `getUser`, `DATA_EXPORT_v2`, `admin.tools.list`",
                     "type": "string"
                 },
                 "outputSchema": {
-                    "description": "An optional JSON Schema object defining the structure of the tool's output returned in\nthe structuredContent field of a {@link CallToolResult}.\n\nDefaults to JSON Schema 2020-12 when no explicit `$schema` is provided.\nCurrently restricted to `type: \"object\"` at the root level.",
-                    "properties": {
-                        "$schema": {
-                            "type": "string"
-                        },
-                        "properties": {
-                            "additionalProperties": {
-                                "additionalProperties": true,
-                                "properties": {},
-                                "type": "object"
-                            },
-                            "type": "object"
-                        },
-                        "required": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        "type": {
-                            "const": "object",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "type"
-                    ],
-                    "type": "object"
+                    "$ref": "#/$defs/ToolOutputSchema",
+                    "description": "When present, the tool MUST return `structuredContent` in its result\nconforming to this schema.\n\nEnables clients to programmatically process tool results without\nparsing unstructured content."
                 },
                 "title": {
                     "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for {@link Tool},\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
@@ -4124,6 +4072,36 @@
             },
             "type": "object"
         },
+        "ToolInputSchema": {
+            "description": "A JSON Schema object defining the expected parameters for a tool.",
+            "properties": {
+                "$schema": {
+                    "type": "string"
+                },
+                "properties": {
+                    "additionalProperties": {
+                        "additionalProperties": true,
+                        "properties": {},
+                        "type": "object"
+                    },
+                    "type": "object"
+                },
+                "required": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "const": "object",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
         "ToolListChangedNotification": {
             "description": "An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.",
             "properties": {
@@ -4142,6 +4120,37 @@
             "required": [
                 "jsonrpc",
                 "method"
+            ],
+            "type": "object"
+        },
+        "ToolOutputSchema": {
+            "description": "A JSON Schema object defining the structure of a tool's output returned in\n{@link CallToolResult.structuredContent}.\n\nCurrently restricted to `type: \"object\"` at the root level.",
+            "properties": {
+                "$schema": {
+                    "description": "Defaults to JSON Schema 2020-12 when not provided.",
+                    "type": "string"
+                },
+                "properties": {
+                    "additionalProperties": {
+                        "additionalProperties": true,
+                        "properties": {},
+                        "type": "object"
+                    },
+                    "type": "object"
+                },
+                "required": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "const": "object",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
             ],
             "type": "object"
         },
