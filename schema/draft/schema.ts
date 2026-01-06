@@ -1586,8 +1586,8 @@ export interface ToolListChangedNotification extends JSONRPCNotification {
  * They are not guaranteed to provide a faithful description of
  * tool behavior (including descriptive properties like `title`).
  *
- * Clients should never make tool use decisions based on `ToolAnnotations`
- * received from untrusted servers.
+ * For trust & safety and security, clients MUST consider tool annotations
+ * to be untrusted unless they come from trusted servers.
  *
  * @category `tools/list`
  */
