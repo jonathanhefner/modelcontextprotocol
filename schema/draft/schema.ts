@@ -1498,7 +1498,11 @@ export interface CallToolResult extends Result {
   content: ContentBlock[];
 
   /**
-   * An optional JSON object that represents the structured result of the tool call.
+   * An optional structured result object.
+   *
+   * When the tool defines an {@link Tool.outputSchema}, this field contains the structured result.
+   *
+   * For backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.
    */
   structuredContent?: { [key: string]: unknown };
 
@@ -2459,7 +2463,9 @@ export interface ToolResultContent {
   /**
    * An optional structured result object.
    *
-   * If the tool defined an {@link Tool.outputSchema}, this SHOULD conform to that schema.
+   * When the tool defines an {@link Tool.outputSchema}, this field contains the structured result.
+   *
+   * For backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.
    */
   structuredContent?: { [key: string]: unknown };
 
