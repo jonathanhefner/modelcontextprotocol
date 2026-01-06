@@ -2591,6 +2591,9 @@ export interface ModelHint {
  * {@includeCode ./examples/CompleteRequestParams/prompt-argument-completion-with-context.json}
  */
 export interface CompleteRequestParams extends RequestParams {
+  /**
+   * A reference to the prompt or resource template whose argument is being completed.
+   */
   ref: PromptReference | ResourceTemplateReference;
   /**
    * The argument's information
