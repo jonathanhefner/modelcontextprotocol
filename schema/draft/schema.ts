@@ -2495,7 +2495,7 @@ export interface ToolResultContent {
  * The server's preferences for model selection, requested of the client during sampling.
  *
  * Because LLMs can vary along multiple dimensions, choosing the "best" model is
- * rarely straightforward.  Different models excel in different areas—some are
+ * rarely straightforward. Different models excel in different areas — some are
  * faster but less capable, others are more capable but more expensive, and so
  * on. This interface allows servers to express their priorities across multiple
  * dimensions to help clients make an appropriate selection for their use case.
@@ -2522,9 +2522,9 @@ export interface ModelPreferences {
   hints?: ModelHint[];
 
   /**
-   * How much to prioritize cost when selecting a model. A value of 0 means cost
-   * is not important, while a value of 1 means cost is the most important
-   * factor.
+   * How much to prioritize cost when selecting a model.
+   *
+   * A value of 0 means cost is not important, while a value of 1 means cost is the most important factor. In other words, higher values prefer cheaper models.
    *
    * @TJS-type number
    * @minimum 0
@@ -2533,9 +2533,9 @@ export interface ModelPreferences {
   costPriority?: number;
 
   /**
-   * How much to prioritize sampling speed (latency) when selecting a model. A
-   * value of 0 means speed is not important, while a value of 1 means speed is
-   * the most important factor.
+   * How much to prioritize sampling speed (latency) when selecting a model.
+   *
+   * A value of 0 means speed is not important, while a value of 1 means speed is the most important factor. In other words, higher values prefer faster models.
    *
    * @TJS-type number
    * @minimum 0
@@ -2545,8 +2545,9 @@ export interface ModelPreferences {
 
   /**
    * How much to prioritize intelligence and capabilities when selecting a
-   * model. A value of 0 means intelligence is not important, while a value of 1
-   * means intelligence is the most important factor.
+   * model.
+   *
+   * A value of 0 means intelligence is not important, while a value of 1 means intelligence is the most important factor. In other words, higher values prefer more capable models.
    *
    * @TJS-type number
    * @minimum 0
