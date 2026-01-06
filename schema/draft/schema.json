@@ -2,21 +2,21 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$defs": {
         "Annotations": {
-            "description": "Optional annotations for the client. The client can use annotations to inform how objects are used or displayed",
+            "description": "Optional annotations for the client. The client can use annotations to inform how objects are used or displayed.",
             "properties": {
                 "audience": {
-                    "description": "Describes who the intended audience of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
+                    "description": "Describes who the intended audience of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).\n\nClients can use this field to filter data based on audience.",
                     "items": {
                         "$ref": "#/$defs/Role"
                     },
                     "type": "array"
                 },
                 "lastModified": {
-                    "description": "The moment the resource was last modified, as an ISO 8601 formatted string.\n\nShould be an ISO 8601 formatted string (e.g., \"2025-01-12T15:00:58Z\").\n\nExamples: last activity timestamp in an open file, timestamp when the resource\nwas attached, etc.",
+                    "description": "The moment the resource was last modified, as an ISO 8601 formatted string (e.g., \"2024-11-25T12:34:56Z\").\n\nCan represent the last activity timestamp in an open file, timestamp when the resource was attached, etc.",
                     "type": "string"
                 },
                 "priority": {
-                    "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.",
+                    "description": "Describes how important this data is for operating the server.\n\nA value of 1 means \"most important,\" and indicates that the data is\neffectively required, while 0 means \"least important,\" and indicates that\nthe data is entirely optional.\n\nClients can use this field to prioritize which data to include in context.",
                     "maximum": 1,
                     "minimum": 0,
                     "type": "number"
@@ -189,7 +189,7 @@
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An optional JSON object that represents the structured result of the tool call.",
+                    "description": "An optional structured result object. If the tool defined an {@link Tool.outputSchema}, this object SHOULD conform to that schema.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
                     "type": "object"
                 }
             },
@@ -607,7 +607,8 @@
                         {
                             "$ref": "#/$defs/ResourceTemplateReference"
                         }
-                    ]
+                    ],
+                    "description": "A reference to the prompt or resource template whose argument is being completed."
                 }
             },
             "required": [
@@ -2372,10 +2373,10 @@
             "type": "object"
         },
         "ModelPreferences": {
-            "description": "The server's preferences for model selection, requested of the client during sampling.\n\nBecause LLMs can vary along multiple dimensions, choosing the \"best\" model is\nrarely straightforward.  Different models excel in different areas—some are\nfaster but less capable, others are more capable but more expensive, and so\non. This interface allows servers to express their priorities across multiple\ndimensions to help clients make an appropriate selection for their use case.\n\nThese preferences are always advisory. The client MAY ignore them. It is also\nup to the client to decide how to interpret these preferences and how to\nbalance them against other considerations.",
+            "description": "The server's preferences for model selection, requested of the client during sampling.\n\nBecause LLMs can vary along multiple dimensions, choosing the \"best\" model is\nrarely straightforward. Different models excel in different areas — some are\nfaster but less capable, others are more capable but more expensive, and so\non. This interface allows servers to express their priorities across multiple\ndimensions to help clients make an appropriate selection for their use case.\n\nThese preferences are always advisory. The client MAY ignore them. It is also\nup to the client to decide how to interpret these preferences and how to\nbalance them against other considerations.",
             "properties": {
                 "costPriority": {
-                    "description": "How much to prioritize cost when selecting a model. A value of 0 means cost\nis not important, while a value of 1 means cost is the most important\nfactor.",
+                    "description": "How much to prioritize cost when selecting a model.\n\nA value of 0 means cost is not important, while a value of 1 means cost is the most important factor. In other words, higher values prefer cheaper models.",
                     "maximum": 1,
                     "minimum": 0,
                     "type": "number"
@@ -2388,13 +2389,13 @@
                     "type": "array"
                 },
                 "intelligencePriority": {
-                    "description": "How much to prioritize intelligence and capabilities when selecting a\nmodel. A value of 0 means intelligence is not important, while a value of 1\nmeans intelligence is the most important factor.",
+                    "description": "How much to prioritize intelligence and capabilities when selecting a\nmodel.\n\nA value of 0 means intelligence is not important, while a value of 1 means intelligence is the most important factor. In other words, higher values prefer more capable models.",
                     "maximum": 1,
                     "minimum": 0,
                     "type": "number"
                 },
                 "speedPriority": {
-                    "description": "How much to prioritize sampling speed (latency) when selecting a model. A\nvalue of 0 means speed is not important, while a value of 1 means speed is\nthe most important factor.",
+                    "description": "How much to prioritize sampling speed (latency) when selecting a model.\n\nA value of 0 means speed is not important, while a value of 1 means speed is the most important factor. In other words, higher values prefer faster models.",
                     "maximum": 1,
                     "minimum": 0,
                     "type": "number"
@@ -2683,7 +2684,7 @@
                     "type": "array"
                 },
                 "description": {
-                    "description": "An optional description of what this prompt provides",
+                    "description": "An optional description of what this prompt provides.",
                     "type": "string"
                 },
                 "icons": {
@@ -2694,7 +2695,7 @@
                     "type": "array"
                 },
                 "name": {
-                    "description": "Intended for programmatic or logical use, but used as a display name in past specs or fallback (if title isn't present).",
+                    "description": "A unique identifier (within this server) for the prompt.",
                     "type": "string"
                 },
                 "title": {
@@ -2881,7 +2882,7 @@
             "type": "object"
         },
         "RelatedTaskMetadata": {
-            "description": "Metadata for associating messages with a task.\nInclude this in the `_meta` field under the key `io.modelcontextprotocol/related-task`.",
+            "description": "Metadata for associating messages with a task.\nInclude this in the `_meta` field under the key `io.modelcontextprotocol/related-task`.\n\nAll requests, responses, and notifications associated with a task MUST include this metadata.\n\nFor `tasks/get`, `tasks/list`, and `tasks/cancel` operations, requestors and receivers\nSHOULD NOT include this metadata, as the `taskId` is already present in the message structure.\n\nThe `tasks/result` operation MUST include this metadata in its response, as the result\nstructure itself does not contain the task ID.",
             "properties": {
                 "taskId": {
                     "description": "The task identifier this message is associated with.",
@@ -2972,7 +2973,7 @@
                     "type": "string"
                 },
                 "uri": {
-                    "description": "The URI of this resource.",
+                    "description": "The unique URI of this resource.",
                     "format": "uri",
                     "type": "string"
                 }
@@ -3046,7 +3047,7 @@
                     "type": "string"
                 },
                 "uri": {
-                    "description": "The URI of this resource.",
+                    "description": "The unique URI of this resource.",
                     "format": "uri",
                     "type": "string"
                 }
@@ -3224,11 +3225,11 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "name": {
-                    "description": "An optional name for the root. This can be used to provide a human-readable\nidentifier for the root, which may be useful for display purposes or for\nreferencing the root in other parts of the application.",
+                    "description": "An optional name for the root.\n\nThis can be used to provide a human-readable identifier for the root, which may be useful for display purposes or for referencing the root in other parts of the application.",
                     "type": "string"
                 },
                 "uri": {
-                    "description": "The URI identifying the root. This *must* start with `file://` for now.\nThis restriction may be relaxed in future versions of the protocol to allow\nother URI schemes.",
+                    "description": "The unique URI identifying the root.\n\nThis MUST start with `file://` for now. This restriction may be relaxed in future versions of the protocol to allow other URI schemes.",
                     "format": "uri",
                     "type": "string"
                 }
@@ -3761,7 +3762,7 @@
             "type": "object"
         },
         "TaskStatus": {
-            "description": "The status of a task.",
+            "description": "The status of a task.\n\n- `\"working\"`: The request is currently being processed\n- `\"input_required\"`: The receiver needs input from the requestor. The requestor should call `tasks/result` to receive input requests, even though the task has not reached a terminal state.\n- `\"completed\"`: The request completed successfully and results are available\n- `\"failed\"`: The associated request did not complete successfully. For tool calls specifically, this includes cases where the tool call result has `isError` set to true.\n- `\"cancelled\"`: The request was cancelled before completion",
             "enum": [
                 "cancelled",
                 "completed",
@@ -3998,12 +3999,12 @@
                     "description": "Defines the arguments the tool accepts.\n\nUsed by LLMs to determine what arguments to provide when calling this tool.\nTools accepting no arguments should use `{ type: \"object\", additionalProperties: false }`."
                 },
                 "name": {
-                    "description": "The name of the tool.\n\n- Tool names **SHOULD** be between 1 and 128 characters in length (inclusive).\n- Tool names **SHOULD** be considered case-sensitive.\n- The following **SHOULD** be the only allowed characters: uppercase and lowercase\n  ASCII letters (A-Z, a-z), digits (0-9), underscore (_), hyphen (-), and dot (.)\n- Tool names **SHOULD NOT** contain spaces, commas, or other special characters.\n- Tool names **SHOULD** be unique within a server.\n\nExample valid tool names: `getUser`, `DATA_EXPORT_v2`, `admin.tools.list`",
+                    "description": "The name of the tool.\n\n- Tool names SHOULD be between 1 and 128 characters in length (inclusive).\n- Tool names SHOULD be considered case-sensitive.\n- The following SHOULD be the only allowed characters: uppercase and lowercase\n  ASCII letters (A-Z, a-z), digits (0-9), underscore (_), hyphen (-), and dot (.)\n- Tool names SHOULD NOT contain spaces, commas, or other special characters.\n- Tool names SHOULD be unique within a server.\n\nExample valid tool names: `getUser`, `DATA_EXPORT_v2`, `admin.tools.list`",
                     "type": "string"
                 },
                 "outputSchema": {
                     "$ref": "#/$defs/ToolOutputSchema",
-                    "description": "When present, the tool MUST return `structuredContent` in its result\nconforming to this schema.\n\nEnables clients to programmatically process tool results without\nparsing unstructured content."
+                    "description": "When present, the tool MUST return `structuredContent` in its result conforming to this schema. Clients SHOULD validate structured results against this schema.\n\nEnables clients to programmatically process tool results without parsing unstructured content."
                 },
                 "title": {
                     "description": "Intended for UI and end-user contexts — optimized to be human-readable and easily understood,\neven by those unfamiliar with domain-specific terminology.\n\nIf not provided, the name should be used for display (except for {@link Tool},\nwhere `annotations.title` should be given precedence over using `name`,\nif present).",
@@ -4017,7 +4018,7 @@
             "type": "object"
         },
         "ToolAnnotations": {
-            "description": "Additional properties describing a {@link Tool} to clients.\n\nNOTE: all properties in `ToolAnnotations` are **hints**.\nThey are not guaranteed to provide a faithful description of\ntool behavior (including descriptive properties like `title`).\n\nClients should never make tool use decisions based on `ToolAnnotations`\nreceived from untrusted servers.",
+            "description": "Additional properties describing a {@link Tool} to clients.\n\nNOTE: all properties in `ToolAnnotations` are **hints**.\nThey are not guaranteed to provide a faithful description of\ntool behavior (including descriptive properties like `title`).\n\nFor trust & safety and security, clients MUST consider tool annotations\nto be untrusted unless they come from trusted servers.",
             "properties": {
                 "destructiveHint": {
                     "description": "If true, the tool may perform destructive updates to its environment.\nIf false, the tool performs only additive updates.\n\n(This property is meaningful only when `readOnlyHint == false`)\n\nDefault: true",
@@ -4076,6 +4077,7 @@
             "description": "A JSON Schema object defining the expected parameters for a tool.",
             "properties": {
                 "$schema": {
+                    "description": "Defaults to JSON Schema 2020-12 when not provided.",
                     "type": "string"
                 },
                 "properties": {
@@ -4174,7 +4176,7 @@
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An optional structured result object.\n\nIf the tool defined an {@link Tool.outputSchema}, this SHOULD conform to that schema.",
+                    "description": "An optional structured result object. If the tool defined an {@link Tool.outputSchema}, this object SHOULD conform to that schema.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
                     "type": "object"
                 },
                 "toolUseId": {

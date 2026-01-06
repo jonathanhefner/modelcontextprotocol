@@ -1776,14 +1776,20 @@ export interface Tool extends BaseMetadata, Icons {
 /**
  * The status of a task.
  *
+ * - `"working"`: The request is currently being processed.
+ * - `"input_required"`: The receiver needs input from the requestor. The requestor should call `tasks/result` to receive input requests, even though the task has not reached a terminal state.
+ * - `"completed"`: The request completed successfully and results are available.
+ * - `"failed"`: The associated request did not complete successfully. For tool calls specifically, this includes cases where the tool call result has `isError` set to true.
+ * - `"cancelled"`: The request was cancelled before completion.
+ *
  * @category `tasks`
  */
 export type TaskStatus =
-  | "working" // The request is currently being processed
-  | "input_required" // The task is waiting for input (e.g., elicitation or sampling)
-  | "completed" // The request completed successfully and results are available
-  | "failed" // The associated request did not complete successfully. For tool calls specifically, this includes cases where the tool call result has `isError` set to true.
-  | "cancelled"; // The request was cancelled before completion
+  | "working"
+  | "input_required"
+  | "completed"
+  | "failed"
+  | "cancelled";
 
 /**
  * Metadata for augmenting a request with task execution.
@@ -1800,7 +1806,12 @@ export interface TaskMetadata {
 
 /**
  * Metadata for associating messages with a task.
- * Include this in the `_meta` field under the key `io.modelcontextprotocol/related-task`.
+ *
+ * All requests, responses, and notifications associated with a task MUST include this metadata in the `_meta` field under the key `io.modelcontextprotocol/related-task`.
+ *
+ * For {@link GetTaskRequest | tasks/get}, {@link ListTasksRequest | tasks/list}, and {@link CancelTaskRequest | tasks/cancel} operations, requestors and receivers SHOULD NOT include this metadata, as the `taskId` is already present in the message structure.
+ *
+ * The {@link GetTaskPayloadRequest | tasks/result} operation MUST include this metadata in its response, as the result structure itself does not contain the task ID.
  *
  * @category `tasks`
  */
@@ -1818,21 +1829,22 @@ export interface RelatedTaskMetadata {
  */
 export interface Task {
   /**
-   * The task identifier.
+   * The unique identifier for the task.
    */
   taskId: string;
 
   /**
-   * Current task state.
+   * Current state of the task execution.
    */
   status: TaskStatus;
 
   /**
    * Optional human-readable message describing the current task state.
+   *
    * This can provide context for any status, including:
-   * - Reasons for "cancelled" status
-   * - Summaries for "completed" status
-   * - Diagnostic information for "failed" status (e.g., error details, what went wrong)
+   * - Reasons for `"cancelled"` status
+   * - Summaries for `"completed"` status
+   * - Diagnostic information for `"failed"` status (e.g., error details, what went wrong)
    */
   statusMessage?: string;
 
