@@ -1125,7 +1125,7 @@ export interface ResourceUpdatedNotification extends JSONRPCNotification {
  */
 export interface Resource extends BaseMetadata, Icons {
   /**
-   * The URI of this resource.
+   * The unique URI of this resource.
    *
    * @format uri
    */
@@ -2267,7 +2267,7 @@ export type SamplingMessageContentBlock =
   | ToolResultContent;
 
 /**
- * Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
+ * Optional annotations for the client. The client can use annotations to inform how objects are used or displayed.
  *
  * @category Common Types
  */
@@ -2276,6 +2276,8 @@ export interface Annotations {
    * Describes who the intended audience of this object or data is.
    *
    * It can include multiple entries to indicate content useful for multiple audiences (e.g., `["user", "assistant"]`).
+   *
+   * Clients can use this field to filter data based on audience.
    */
   audience?: Role[];
 
@@ -2286,6 +2288,8 @@ export interface Annotations {
    * effectively required, while 0 means "least important," and indicates that
    * the data is entirely optional.
    *
+   * Clients can use this field to prioritize which data to include in context.
+   *
    * @TJS-type number
    * @minimum 0
    * @maximum 1
@@ -2293,12 +2297,9 @@ export interface Annotations {
   priority?: number;
 
   /**
-   * The moment the resource was last modified, as an ISO 8601 formatted string.
+   * The moment the resource was last modified, as an ISO 8601 formatted string (e.g., "2024-11-25T12:34:56Z").
    *
-   * Should be an ISO 8601 formatted string (e.g., "2025-01-12T15:00:58Z").
-   *
-   * Examples: last activity timestamp in an open file, timestamp when the resource
-   * was attached, etc.
+   * Can represent the last activity timestamp in an open file, timestamp when the resource was attached, etc.
    */
   lastModified?: string;
 }
