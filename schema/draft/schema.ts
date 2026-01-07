@@ -464,6 +464,8 @@ export interface ClientCapabilities {
   /**
    * Present if the client supports listing roots.
    *
+   * Clients that support roots MUST include this capability.
+   *
    * @example Roots — minimum baseline support
    * {@includeCode ./examples/ClientCapabilities/roots-minimum-baseline-support.json}
    *
@@ -473,11 +475,15 @@ export interface ClientCapabilities {
   roots?: {
     /**
      * Whether the client supports notifications for changes to the roots list.
+     *
+     * Clients that declare this capability MUST send a {@link RootsListChangedNotification | notifications/roots/list_changed} notification when roots change.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the client supports sampling from an LLM.
+   *
+   * Clients that support sampling MUST include this capability.
    *
    * @example Sampling — minimum baseline support
    * {@includeCode ./examples/ClientCapabilities/sampling-minimum-baseline-support.json}
@@ -491,16 +497,21 @@ export interface ClientCapabilities {
   sampling?: {
     /**
      * Whether the client supports context inclusion via `includeContext` parameter.
+     *
      * If not declared, servers SHOULD only use `includeContext: "none"` (or omit it).
      */
     context?: object;
     /**
      * Whether the client supports tool use via `tools` and `toolChoice` parameters.
+     *
+     * Clients MUST declare this capability to receive tool-enabled sampling requests. Servers MUST NOT send tool-enabled sampling requests to clients that have not declared this capability.
      */
     tools?: object;
   };
   /**
    * Present if the client supports elicitation from the server.
+   *
+   * Clients that support elicitation MUST include this capability and MUST support at least one mode (`form` or `url`).
    *
    * @example Elicitation — form and URL mode support
    * {@includeCode ./examples/ClientCapabilities/elicitation-form-and-url-mode-support.json}
@@ -512,6 +523,8 @@ export interface ClientCapabilities {
 
   /**
    * Present if the client supports task-augmented requests.
+   *
+   * Clients that support task-augmented requests MUST include this capability.
    */
   tasks?: {
     /**
@@ -531,7 +544,7 @@ export interface ClientCapabilities {
        */
       sampling?: {
         /**
-         * Whether the client supports task-augmented `sampling/createMessage` requests.
+         * Whether the client supports task-augmented {@link CreateMessageRequest | sampling/createMessage} requests.
          */
         createMessage?: object;
       };
@@ -561,6 +574,8 @@ export interface ServerCapabilities {
   /**
    * Present if the server supports sending log messages to the client.
    *
+   * Servers that emit log message notifications MUST include this capability.
+   *
    * @example Logging — minimum baseline support
    * {@includeCode ./examples/ServerCapabilities/logging-minimum-baseline-support.json}
    */
@@ -568,12 +583,16 @@ export interface ServerCapabilities {
   /**
    * Present if the server supports argument autocompletion suggestions.
    *
+   * Servers that support completions MUST include this capability.
+   *
    * @example Completions — minimum baseline support
    * {@includeCode ./examples/ServerCapabilities/completions-minimum-baseline-support.json}
    */
   completions?: object;
   /**
    * Present if the server offers any prompt templates.
+   *
+   * Servers that offer prompts MUST include this capability.
    *
    * @example Prompts — minimum baseline support
    * {@includeCode ./examples/ServerCapabilities/prompts-minimum-baseline-support.json}
@@ -584,11 +603,15 @@ export interface ServerCapabilities {
   prompts?: {
     /**
      * Whether this server supports notifications for changes to the prompt list.
+     *
+     * Servers that declare this capability SHOULD send a {@link PromptListChangedNotification | notifications/prompts/list_changed} notification whenever their list of available prompts changes.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the server offers any resources to read.
+   *
+   * Servers that offer resources MUST include this capability. Servers that use embedded resources (e.g., in tool results) SHOULD also implement this capability.
    *
    * @example Resources — minimum baseline support
    * {@includeCode ./examples/ServerCapabilities/resources-minimum-baseline-support.json}
@@ -609,11 +632,15 @@ export interface ServerCapabilities {
     subscribe?: boolean;
     /**
      * Whether this server supports notifications for changes to the resource list.
+     *
+     * Servers that declare this capability SHOULD send a {@link ResourceListChangedNotification | notifications/resources/list_changed} notification whenever their list of available resources changes.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the server offers any tools to call.
+   *
+   * Servers that offer tools MUST include this capability.
    *
    * @example Tools — minimum baseline support
    * {@includeCode ./examples/ServerCapabilities/tools-minimum-baseline-support.json}
@@ -624,11 +651,15 @@ export interface ServerCapabilities {
   tools?: {
     /**
      * Whether this server supports notifications for changes to the tool list.
+     *
+     * Servers that declare this capability SHOULD send a {@link ToolListChangedNotification | notifications/tools/list_changed} notification whenever their list of available tools changes.
      */
     listChanged?: boolean;
   };
   /**
    * Present if the server supports task-augmented requests.
+   *
+   * Servers that support task-augmented requests MUST include this capability.
    */
   tasks?: {
     /**
