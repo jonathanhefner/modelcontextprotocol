@@ -2277,7 +2277,7 @@
             "type": "object"
         },
         "LoggingLevel": {
-            "description": "The severity of a log message.\n\nThese map to syslog message severities, as specified in RFC-5424:\nhttps://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1",
+            "description": "The severity of a log message.\n\nThese map to syslog message severities, as specified in RFC-5424:\nhttps://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1\n\nThe levels in increasing order of severity are:\n- `debug`: Detailed debugging information (e.g., function entry/exit points)\n- `info`: General informational messages (e.g., operation progress updates)\n- `notice`: Normal but significant events (e.g., configuration changes)\n- `warning`: Warning conditions (e.g., deprecated feature usage)\n- `error`: Error conditions (e.g., operation failures)\n- `critical`: Critical conditions (e.g., system component failures)\n- `alert`: Action must be taken immediately (e.g., data corruption detected)\n- `emergency`: System is unusable (e.g., complete system failure)",
             "enum": [
                 "alert",
                 "critical",

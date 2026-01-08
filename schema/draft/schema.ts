@@ -2161,6 +2161,17 @@ export interface LoggingMessageNotification extends JSONRPCNotification {
  * These map to syslog message severities, as specified in RFC-5424:
  * https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
  *
+ * The levels in increasing order of severity are:
+ *
+ * - `debug`: Detailed debugging information (e.g., function entry/exit points)
+ * - `info`: General informational messages (e.g., operation progress updates)
+ * - `notice`: Normal but significant events (e.g., configuration changes)
+ * - `warning`: Warning conditions (e.g., deprecated feature usage)
+ * - `error`: Error conditions (e.g., operation failures)
+ * - `critical`: Critical conditions (e.g., system component failures)
+ * - `alert`: Action must be taken immediately (e.g., data corruption detected)
+ * - `emergency`: System is unusable (e.g., complete system failure)
+ *
  * @category Common Types
  */
 export type LoggingLevel =
