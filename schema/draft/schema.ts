@@ -2134,16 +2134,30 @@ export interface LoggingMessageNotificationParams extends NotificationParams {
   level: LoggingLevel;
   /**
    * An optional name of the logger issuing this message.
+   *
+   * Servers SHOULD use consistent logger names to help clients organize and filter log messages.
    */
   logger?: string;
   /**
    * The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
+   *
+   * Servers SHOULD include relevant context in the data field.
+   *
+   * Log messages MUST NOT contain credentials or secrets, personal identifying information, or internal system details that could aid attacks.
    */
   data: unknown;
 }
 
 /**
- * JSONRPCNotification of a log message passed from server to client. If no `logging/setLevel` request has been sent from the client, the server MAY decide which messages to send automatically.
+ * Notification of a log message passed from server to client.
+ *
+ * If no {@link SetLevelRequest | logging/setLevel} request has been sent from the client, the server MAY decide which messages to send automatically.
+ *
+ * Servers SHOULD rate limit log messages to avoid overwhelming clients.
+ *
+ * Servers SHOULD validate all data fields and monitor for sensitive content. Clients SHOULD control access to logged data.
+ *
+ * Clients MAY present log messages in the UI, implement log filtering and search, display severity levels visually, or persist log messages for later review.
  *
  * @example Log database connection failed
  * {@includeCode ./examples/LoggingMessageNotification/log-database-connection-failed.json}

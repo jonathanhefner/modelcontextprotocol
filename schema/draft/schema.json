@@ -2277,7 +2277,7 @@
             "type": "object"
         },
         "LoggingLevel": {
-            "description": "The severity of a log message.\n\nThese map to syslog message severities, as specified in RFC-5424:\nhttps://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1\n\nThe levels in increasing order of severity are:\n- `debug`: Detailed debugging information (e.g., function entry/exit points)\n- `info`: General informational messages (e.g., operation progress updates)\n- `notice`: Normal but significant events (e.g., configuration changes)\n- `warning`: Warning conditions (e.g., deprecated feature usage)\n- `error`: Error conditions (e.g., operation failures)\n- `critical`: Critical conditions (e.g., system component failures)\n- `alert`: Action must be taken immediately (e.g., data corruption detected)\n- `emergency`: System is unusable (e.g., complete system failure)",
+            "description": "The severity of a log message.\n\nThese map to syslog message severities, as specified in RFC-5424:\nhttps://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1\n\nThe levels in increasing order of severity are:\n\n- `debug`: Detailed debugging information (e.g., function entry/exit points)\n- `info`: General informational messages (e.g., operation progress updates)\n- `notice`: Normal but significant events (e.g., configuration changes)\n- `warning`: Warning conditions (e.g., deprecated feature usage)\n- `error`: Error conditions (e.g., operation failures)\n- `critical`: Critical conditions (e.g., system component failures)\n- `alert`: Action must be taken immediately (e.g., data corruption detected)\n- `emergency`: System is unusable (e.g., complete system failure)",
             "enum": [
                 "alert",
                 "critical",
@@ -2291,7 +2291,7 @@
             "type": "string"
         },
         "LoggingMessageNotification": {
-            "description": "JSONRPCNotification of a log message passed from server to client. If no `logging/setLevel` request has been sent from the client, the server MAY decide which messages to send automatically.",
+            "description": "Notification of a log message passed from server to client.\n\nIf no {@link SetLevelRequestlogging/setLevel} request has been sent from the client, the server MAY decide which messages to send automatically.\n\nServers SHOULD rate limit log messages to avoid overwhelming clients.\n\nServers SHOULD validate all data fields and monitor for sensitive content. Clients SHOULD control access to logged data.\n\nClients MAY present log messages in the UI, implement log filtering and search, display severity levels visually, or persist log messages for later review.",
             "properties": {
                 "jsonrpc": {
                     "const": "2.0",
@@ -2319,14 +2319,14 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "data": {
-                    "description": "The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here."
+                    "description": "The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.\n\nServers SHOULD include relevant context in the data field.\n\nLog messages MUST NOT contain credentials or secrets, personal identifying information, or internal system details that could aid attacks."
                 },
                 "level": {
                     "$ref": "#/$defs/LoggingLevel",
                     "description": "The severity of this log message."
                 },
                 "logger": {
-                    "description": "An optional name of the logger issuing this message.",
+                    "description": "An optional name of the logger issuing this message.\n\nServers SHOULD use consistent logger names to help clients organize and filter log messages.",
                     "type": "string"
                 }
             },
