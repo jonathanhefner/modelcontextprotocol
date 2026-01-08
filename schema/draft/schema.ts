@@ -891,6 +891,8 @@ export interface PaginatedRequestParams extends RequestParams {
    * If provided, the server should return results starting after this cursor.
    *
    * Servers SHOULD handle invalid cursors gracefully, such as by returning an {@link InvalidParamsError | invalid params error} or starting from the beginning.
+   *
+   * @see {@link Cursor}
    */
   cursor?: Cursor;
 }
@@ -911,6 +913,8 @@ export interface PaginatedResult extends Result {
    * Clients SHOULD:
    * - Treat a missing `nextCursor` as the end of results
    * - Support both paginated and non-paginated flows
+   *
+   * @see {@link Cursor}
    */
   nextCursor?: Cursor;
 }
