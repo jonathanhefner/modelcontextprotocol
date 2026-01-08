@@ -2669,6 +2669,8 @@ export interface ModelHint {
 /**
  * Parameters for a `completion/complete` request.
  *
+ * Servers MUST validate all completion inputs.
+ *
  * @category `completion/complete`
  *
  * @example Prompt argument completion
@@ -2682,6 +2684,7 @@ export interface CompleteRequestParams extends RequestParams {
    * A reference to the prompt or resource template whose argument is being completed.
    */
   ref: PromptReference | ResourceTemplateReference;
+
   /**
    * The argument's information
    */
@@ -2692,6 +2695,8 @@ export interface CompleteRequestParams extends RequestParams {
     name: string;
     /**
      * The value of the argument to use for completion matching.
+     *
+     * Servers SHOULD implement fuzzy matching where appropriate.
      */
     value: string;
   };
@@ -2710,6 +2715,8 @@ export interface CompleteRequestParams extends RequestParams {
 /**
  * A request from the client to the server, to ask for completion options.
  *
+ * Clients SHOULD debounce rapid completion requests. Servers MUST implement appropriate rate limiting.
+ *
  * @example Completion request
  * {@includeCode ./examples/CompleteRequest/completion-request.json}
  *
@@ -2723,6 +2730,8 @@ export interface CompleteRequest extends JSONRPCRequest {
 /**
  * The result returned by the server for a {@link CompleteRequest | completion/complete} request.
  *
+ * Clients SHOULD cache completion results where appropriate.
+ *
  * @category `completion/complete`
  *
  * @example Single completion value
@@ -2735,6 +2744,12 @@ export interface CompleteResult extends Result {
   completion: {
     /**
      * An array of completion values. Must not exceed 100 items.
+     *
+     * Servers SHOULD return suggestions sorted by relevance.
+     *
+     * Servers MUST control access to sensitive suggestions and prevent completion-based information disclosure.
+     *
+     * Clients SHOULD handle missing or partial results gracefully.
      */
     values: string[];
     /**

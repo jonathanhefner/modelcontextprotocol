@@ -537,7 +537,7 @@
             ]
         },
         "CompleteRequest": {
-            "description": "A request from the client to the server, to ask for completion options.",
+            "description": "A request from the client to the server, to ask for completion options.\n\nClients SHOULD debounce rapid completion requests. Servers MUST implement appropriate rate limiting.",
             "properties": {
                 "id": {
                     "$ref": "#/$defs/RequestId"
@@ -563,7 +563,7 @@
             "type": "object"
         },
         "CompleteRequestParams": {
-            "description": "Parameters for a `completion/complete` request.",
+            "description": "Parameters for a `completion/complete` request.\n\nServers MUST validate all completion inputs.",
             "properties": {
                 "_meta": {
                     "$ref": "#/$defs/RequestMetaObject"
@@ -576,7 +576,7 @@
                             "type": "string"
                         },
                         "value": {
-                            "description": "The value of the argument to use for completion matching.",
+                            "description": "The value of the argument to use for completion matching.\n\nServers SHOULD implement fuzzy matching where appropriate.",
                             "type": "string"
                         }
                     },
@@ -618,7 +618,7 @@
             "type": "object"
         },
         "CompleteResult": {
-            "description": "The result returned by the server for a {@link CompleteRequestcompletion/complete} request.",
+            "description": "The result returned by the server for a {@link CompleteRequestcompletion/complete} request.\n\nClients SHOULD cache completion results where appropriate.",
             "properties": {
                 "_meta": {
                     "$ref": "#/$defs/MetaObject"
@@ -634,7 +634,7 @@
                             "type": "integer"
                         },
                         "values": {
-                            "description": "An array of completion values. Must not exceed 100 items.",
+                            "description": "An array of completion values. Must not exceed 100 items.\n\nServers SHOULD return suggestions sorted by relevance.\n\nServers MUST control access to sensitive suggestions and prevent completion-based information disclosure.\n\nClients SHOULD handle missing or partial results gracefully.",
                             "items": {
                                 "type": "string"
                             },
