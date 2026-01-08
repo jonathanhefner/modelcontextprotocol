@@ -60,6 +60,12 @@ export type ProgressToken = string | number;
 /**
  * An opaque token used to represent a cursor for pagination.
  *
+ * Clients MUST treat cursors as opaque tokens:
+ * - Do not make assumptions about cursor format
+ * - Do not attempt to parse or modify cursors
+ * - Do not make determinations based on the contents of the string (e.g., Do not interpret empty string as signaling the end of results)
+ * - Do not persist cursors across sessions
+ *
  * @category Common Types
  */
 export type Cursor = string;
@@ -883,6 +889,8 @@ export interface PaginatedRequestParams extends RequestParams {
   /**
    * An opaque token representing the current pagination position.
    * If provided, the server should return results starting after this cursor.
+   *
+   * Servers SHOULD handle invalid cursors gracefully, such as by returning an {@link InvalidParamsError | invalid params error} or starting from the beginning.
    */
   cursor?: Cursor;
 }
@@ -897,6 +905,12 @@ export interface PaginatedResult extends Result {
   /**
    * An opaque token representing the pagination position after the last returned result.
    * If present, there may be more results available.
+   *
+   * Servers SHOULD provide stable cursors that remain valid across requests.
+   *
+   * Clients SHOULD:
+   * - Treat a missing `nextCursor` as the end of results
+   * - Support both paginated and non-paginated flows
    */
   nextCursor?: Cursor;
 }

@@ -189,7 +189,7 @@
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An optional structured result object. If the tool defined an {@link Tool.outputSchema}, this object SHOULD conform to that schema.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
+                    "description": "An optional structured result object.\n\nWhen the tool defines an {@link Tool.outputSchema}, this field contains the structured result.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
                     "type": "object"
                 }
             },
@@ -896,7 +896,7 @@
             "type": "object"
         },
         "Cursor": {
-            "description": "An opaque token used to represent a cursor for pagination.",
+            "description": "An opaque token used to represent a cursor for pagination.\n\nClients MUST treat cursors as opaque tokens:\n- Do not make assumptions about cursor format\n- Do not attempt to parse or modify cursors\n- Do not make determinations based on the contents of the string (e.g., Do not interpret empty string as signaling the end of results)\n- Do not persist cursors across sessions",
             "type": "string"
         },
         "ElicitRequest": {
@@ -1904,7 +1904,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 },
                 "prompts": {
@@ -1972,7 +1972,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 },
                 "resourceTemplates": {
@@ -2040,7 +2040,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 },
                 "resources": {
@@ -2172,7 +2172,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 },
                 "tasks": {
@@ -2240,7 +2240,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 },
                 "tools": {
@@ -2497,7 +2497,7 @@
                     "$ref": "#/$defs/RequestMetaObject"
                 },
                 "cursor": {
-                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.",
+                    "description": "An opaque token representing the current pagination position.\nIf provided, the server should return results starting after this cursor.\n\nServers SHOULD handle invalid cursors gracefully, such as by returning an {@link InvalidParamsErrorinvalid params error} or starting from the beginning.",
                     "type": "string"
                 }
             },
@@ -2509,7 +2509,7 @@
                     "$ref": "#/$defs/MetaObject"
                 },
                 "nextCursor": {
-                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.",
+                    "description": "An opaque token representing the pagination position after the last returned result.\nIf present, there may be more results available.\n\nServers SHOULD provide stable cursors that remain valid across requests.\n\nClients SHOULD:\n- Treat a missing `nextCursor` as the end of results\n- Support both paginated and non-paginated flows",
                     "type": "string"
                 }
             },
@@ -3348,7 +3348,7 @@
                     "description": "Present if the server offers any prompt templates.\n\nServers that offer prompts MUST include this capability.",
                     "properties": {
                         "listChanged": {
-                            "description": "Whether this server supports notifications for changes to the prompt list.",
+                            "description": "Whether this server supports notifications for changes to the prompt list.\n\nServers that declare this capability SHOULD send a {@link PromptListChangedNotificationnotifications/prompts/list_changed} notification whenever their list of available prompts changes.",
                             "type": "boolean"
                         }
                     },
@@ -3358,7 +3358,7 @@
                     "description": "Present if the server offers any resources to read.\n\nServers that offer resources MUST include this capability. Servers that use embedded resources (e.g., in tool results) SHOULD also implement this capability.",
                     "properties": {
                         "listChanged": {
-                            "description": "Whether this server supports notifications for changes to the resource list.",
+                            "description": "Whether this server supports notifications for changes to the resource list.\n\nServers that declare this capability SHOULD send a {@link ResourceListChangedNotificationnotifications/resources/list_changed} notification whenever their list of available resources changes.",
                             "type": "boolean"
                         },
                         "subscribe": {
@@ -3408,7 +3408,7 @@
                     "description": "Present if the server offers any tools to call.\n\nServers that offer tools MUST include this capability.",
                     "properties": {
                         "listChanged": {
-                            "description": "Whether this server supports notifications for changes to the tool list.\n\nServers that declare this capability SHOULD send a\n{@link ToolListChangedNotificationnotifications/tools/list_changed}\nnotification whenever their list of available tools changes.",
+                            "description": "Whether this server supports notifications for changes to the tool list.\n\nServers that declare this capability SHOULD send a {@link ToolListChangedNotificationnotifications/tools/list_changed} notification whenever their list of available tools changes.",
                             "type": "boolean"
                         }
                     },
@@ -4176,7 +4176,7 @@
                 },
                 "structuredContent": {
                     "additionalProperties": {},
-                    "description": "An optional structured result object. If the tool defined an {@link Tool.outputSchema}, this object SHOULD conform to that schema.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
+                    "description": "An optional structured result object.\n\nWhen the tool defines an {@link Tool.outputSchema}, this field contains the structured result.\n\nFor backward compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a {@link TextContent} block in {@link content}.",
                     "type": "object"
                 },
                 "toolUseId": {
